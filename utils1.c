@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 14:20:46 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/16 21:51:10 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/19 21:09:23 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,13 +50,10 @@ void	init_vars(t_vars *vars, char *map_name)
 		print_error_exit(0);
 }
 
-void	save_color(t_vars *vars, char *str)
+void	save_color(t_vars *vars, char **tmp)
 {
-	char	**tmp;
 	int		cnt;
 
-	printf("str: %s\n", str);
-	tmp = ft_split2(str, " \v\r\f\n\t,");
 	cnt = 0;
 	while (tmp[cnt])
 		cnt++;
@@ -64,6 +61,8 @@ void	save_color(t_vars *vars, char *str)
 		print_error_exit("Color error");
 	if (!ft_strncmp(tmp[0], "C", 2))
 	{
+		if (vars->ceiling)
+			print_error_exit("ceiling color already exists");
 		vars->ceiling = malloc(sizeof(t_color));
 		if (!vars->ceiling)
 			print_error_exit("malloc error");
@@ -74,6 +73,8 @@ void	save_color(t_vars *vars, char *str)
 	}
 	else if (!ft_strncmp(tmp[0], "F", 2))
 	{
+		if (vars->floor)
+			print_error_exit("floor color already exists");
 		vars->floor = malloc(sizeof(t_color));
 		if (!vars->floor)
 			print_error_exit("malloc error");
@@ -102,49 +103,88 @@ void	check_element(t_vars *vars)
 	while (str)
 	{
 		trimmed = ft_strtrim(str, " \v\r\f\n\t");
+		// printf("trimmed: %s\n", trimmed);
 		free(str);
 		if (trimmed[0] == 'F' || trimmed[0] == 'C')
 		{
-			save_color(vars, trimmed);
+			tmp = ft_split2(trimmed, " \v\r\f\n\t,");
+			// print_strs(tmp);
+			save_color(vars, tmp);
 			cnt++;
+			printf("===color %d ===\n", cnt);
 		}
 		// element 저장 -> 
 		else
 		{
 			tmp = ft_split2(trimmed, " \v\r\f\n\t");
-			// save_element(vars, tmp);
-			for (int k = 0; tmp[k]; k++) {
-				printf("tmp[%d]: %s\n", k, tmp[k]);
-			}
-			free_matrix(tmp);
-			if (trimmed[0])
+			if (tmp[0])
+			{
+				// print_strs(tmp);
+				save_element(vars, tmp);
 				cnt++;
+				printf("===texture %d ===\n", cnt);
+			}
 		}
+		free_matrix(tmp);
 		free(trimmed);
-		printf("=== %d ===\n", cnt);
 		if (cnt == 6)
 			break ;
 		str = get_next_line(vars->fd);
 	}
+	if (cnt != 6)
+		print_error_exit("Element error");
+	print_textures(vars->texture);
 }
 
+// libft error exit 으로 바꾸기 체크~!!!!
 void	measure_map_size(t_vars *vars)
 {
 	char	*str;
-	char	*trimed;
+	char	*trimmed;
+	char	*tmp1;
+	char	*tmp2;
 
 	str = get_next_line(vars->fd);
-	if (!str)
-		print_error_exit("No return value from GNL");
-	trimed = ft_strtrim(str, "\n");
-	vars->map_x = ft_strlen(trimed);
-	free(trimed);
+	trimmed = ft_strtrim(str, " \v\r\f\n\t");
+	while (str && !trimmed[0])
+	{
+		// printf("str: %s, ***trimmed: %s\n", str, trimmed);
+		free(str);
+		free(trimmed);
+		str = get_next_line(vars->fd);
+		trimmed = ft_strtrim(str, " \v\r\f\n\t");
+	}
+	free(trimmed);
+	tmp1 = ft_strdup("\0");
+	tmp2 = NULL;
 	while (str)
 	{
+		tmp2 = ft_strjoin(tmp1, str);
 		free(str);
 		str = get_next_line(vars->fd);
-		if (str)
-			vars->map_y++;
+		if (str && str[0] == '\n')
+			print_error_exit("Invalid map");
+		free(tmp1);
+		tmp1 = tmp2;
+		tmp2 = NULL;
 	}
 	close(vars->fd);
+	vars->new_map = ft_split(tmp1, '\n');
+}
+
+void print_strs(char **strs)
+{
+	int i;
+
+	i = 0;
+	if (!strs)
+	{
+		printf("null\n");
+		return ;
+	}
+	while (strs[i])
+	{
+		printf("%s\n", strs[i]);
+		i++;
+	}
 }

@@ -6,16 +6,15 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/08 04:50:31 by hyobicho          #+#    #+#             */
-/*   Updated: 2023/06/16 21:40:16 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/19 19:29:24 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-// 수정할 것 -> 음수, 256 이상 프린트에러
 int	ft_rgb_atoi(const char *str)
 {
-	long long	res;
+	int			res;
 	int			i;
 
 	// while (ft_isblank(*str))
@@ -31,7 +30,7 @@ int	ft_rgb_atoi(const char *str)
 		res = res * 10 + str[i] - '0';
 		i++;
 	}
-	if (res < 0 || res > 255 || str[i] != '\0')
+	if (i > 3 || res < 0 || res > 255 || str[i] != '\0')
 		print_error_exit("Color range error");
 	return (res);
 }

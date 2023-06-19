@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 15:44:59 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/16 17:45:30 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/19 20:16:46 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,29 +14,31 @@
 
 void	init_map(t_vars *vars)
 {
-	int		y_idx;
-	char	*str;
+	int		i;
+	int		j;
+	int		max;
 
-	vars->new_map = (char **)malloc(sizeof(char *) * (vars->map_y + 1));
-	if (!vars->new_map)
+	i = 0;
+	max = -1;
+	while (vars->new_map[i])
 	{
-		free_matrix(vars->new_map);
-		return ;
+		j = 0;
+		while(vars->new_map[i][j])
+		{
+			if (ft_isblank(vars->new_map[i][j]))
+			{
+				vars->new_map[i][j] = -1;
+			}
+			j++;
+			if (j > max)
+				max = j;
+		}
+		i++;
 	}
-	y_idx = 0;
-	vars->hei = 0;
-	while (1)
-	{
-		str = get_next_line(vars->fd);
-		if (!str)
-			break ;
-		vars->new_map[y_idx] = ft_strtrim(str, "\n");
-		count_stuff(vars, vars->new_map[y_idx], y_idx);
-		y_idx++;
-		free(str);
-	}
-	vars->new_map[y_idx] = 0;
-	close(vars->fd);
+	vars->map_x = max;
+	vars->map_y = i;
+	printf("==== map ====\n");
+	print_strs(vars->new_map);
 }
 
 char	**free_matrix(char **arr)

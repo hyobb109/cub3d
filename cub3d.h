@@ -42,7 +42,7 @@ typedef struct s_deque
 
 typedef struct s_texture
 {
-	char				code;	
+	char				*id;
 	void				*img;
 	char				*file_name;
 	int					img_width;
@@ -115,10 +115,7 @@ void	init_coll_info(t_vars *vars, int x_idx, int y_idx);
 void	init_exit_info(t_vars *vars, int x_idx, int y_idx);
 void	init_player_info(t_vars *vars, int x_idx, int y_idx);
 void	validate_map(t_vars *vars);
-int		is_rectangle(t_vars *vars);
-int		is_surrounded(t_vars *vars);
-int		is_correct_count(t_vars *vars);
-int		is_invalid_path(t_vars *vars);
+void	is_surrounded(t_vars *vars, char **str, int h);
 int		validate_path(t_vars *vars);
 char	**make_visit_array(t_vars *vars);
 int		is_continued(t_vars *vars);
@@ -131,11 +128,12 @@ void	move_player(t_vars *vars, int keycode);
 int		key_hook(int keycode, t_vars *vars);
 int		ft_exit(void);
 void	check_exit(t_vars *vars);
-void	create_images(t_texture **head, t_vars *vars);
-t_texture	*find_image_node(t_texture **head, t_vars *vars, char image_code);
-t_texture	*image_lstadd_back(t_texture **head, t_vars *vars, char image_code);
-char	*get_image_file_name(t_texture	*new_node, char image_code);
-t_texture	*init_image_node(t_texture *new_node, t_vars *vars, char image_code);
+void	save_element(t_vars *vars, char **texture);
+t_texture	*texture_lstadd_back(t_vars *vars, char **texture);
+void		get_texture_file_name(t_texture *new_node, char **texture);
+t_texture	*init_texture_node(t_texture *new_node, t_vars *vars, char **texture);
 void	delete_images(t_texture **head);
+void	print_textures(t_texture *head);
+void print_strs(char **strs);
 
 #endif

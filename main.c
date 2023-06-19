@@ -21,9 +21,9 @@ int	main(int ac, char **av)
 	check_args(ac, av);
 	init_vars(&vars, av[1]);
 	check_element(&vars);
-	// measure_map_size(&vars);
-	// init_map(&vars);
-	// validate_map(&vars);
+	measure_map_size(&vars);
+	init_map(&vars);
+	validate_map(&vars);
 	printf("valid\n");
 	// vars.win = mlx_new_window(vars.mlx, BLOCK_SIZE * vars.map_x,
 	// 		BLOCK_SIZE * vars.map_y, "cub3D");
