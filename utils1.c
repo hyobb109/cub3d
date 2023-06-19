@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 14:20:46 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/19 21:09:23 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/19 22:15:27 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,8 @@ void	init_vars(t_vars *vars, char *map_name)
 	vars->ceiling = NULL;
 	vars->check_result = 0; // x
 	vars->new_map = NULL;
-	vars->map_x = 1;
-	vars->map_y = 1;
+	vars->map_x = -1;
+	vars->map_y = -1;
 	vars->play_coll_cnt = 0; // x
 	vars->coll_cnt = 0; // x
 	vars->exit_cnt = 0;
@@ -136,13 +136,39 @@ void	check_element(t_vars *vars)
 	print_textures(vars->texture);
 }
 
+t_map	*init_map_node(char *str, int h)
+{
+	t_map	*new;
+
+	new = malloc(sizeof(t_map));
+	if (!new)
+		print_error_exit("malloc error");
+	new->height = h;
+	new->str = ft_strdup(str);
+	new->width = ft_strlen(str) - 1;
+	new->next = 0;
+	return (new);
+}
+
+void print_maplst(t_map *map)
+{
+	t_map *tmp;
+
+	tmp = map;
+	while (tmp)
+	{
+		printf("height: %d, width: %d, str: %s\n", tmp->height, tmp->width, tmp->str);
+		tmp = tmp->next;
+	}
+}
 // libft error exit 으로 바꾸기 체크~!!!!
 void	measure_map_size(t_vars *vars)
 {
 	char	*str;
 	char	*trimmed;
-	char	*tmp1;
-	char	*tmp2;
+	int		h;
+	t_map	*map;
+	t_map	*tmp;
 
 	str = get_next_line(vars->fd);
 	trimmed = ft_strtrim(str, " \v\r\f\n\t");
@@ -155,21 +181,26 @@ void	measure_map_size(t_vars *vars)
 		trimmed = ft_strtrim(str, " \v\r\f\n\t");
 	}
 	free(trimmed);
-	tmp1 = ft_strdup("\0");
-	tmp2 = NULL;
+	map = 0;
+	h = 0;
+	map = init_map_node(str, h);
+	vars->map_x = map->width;
+	tmp = map;
 	while (str)
 	{
-		tmp2 = ft_strjoin(tmp1, str);
 		free(str);
 		str = get_next_line(vars->fd);
-		if (str && str[0] == '\n')
-			print_error_exit("Invalid map");
-		free(tmp1);
-		tmp1 = tmp2;
-		tmp2 = NULL;
+		if (!str)
+			break ;
+		tmp->next = init_map_node(str, ++h);
+		tmp = tmp->next;
+		if (tmp->width > vars->map_x)
+			vars->map_x = tmp->width;
 	}
 	close(vars->fd);
-	vars->new_map = ft_split(tmp1, '\n');
+	vars->map_y = h;
+	print_maplst(map);
+	printf("map_x: %d, map_y: %d\n", vars->map_x, vars->map_y);
 }
 
 void print_strs(char **strs)

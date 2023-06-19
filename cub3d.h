@@ -58,6 +58,13 @@ typedef struct s_color
 	int				b;
 }	t_color;
 
+typedef struct s_map
+{
+	int		height;
+	int		width;
+	char	*str;
+	struct s_map	*next;
+}	t_map;
 
 typedef struct s_vars
 {
@@ -116,7 +123,7 @@ void	init_exit_info(t_vars *vars, int x_idx, int y_idx);
 void	init_player_info(t_vars *vars, int x_idx, int y_idx);
 void	validate_map(t_vars *vars);
 void	is_surrounded(t_vars *vars, char **str, int h);
-int		validate_path(t_vars *vars);
+int		validate_path(t_vars *vars); 
 char	**make_visit_array(t_vars *vars);
 int		is_continued(t_vars *vars);
 int		is_stuff(t_vars *vars);
