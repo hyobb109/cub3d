@@ -79,7 +79,7 @@ typedef struct s_vars
 	int		wid;
 	int		play_x; // x
 	int		play_y; // x
-	int		play_str_cnt;
+	char	play_pos;
 	int		play_mov_cnt; // x
 	int		play_coll_cnt; // x
 	int		coll_cnt; // x
@@ -115,14 +115,14 @@ void	free_deque(t_deque *deque);
 void	check_element(t_vars *vars);
 void	init_vars(t_vars *vars, char *map_name);
 void	measure_map_size(t_vars *vars);
-void	init_map(t_vars *vars);
+void	init_map(t_vars *vars, t_map *map);
 char	**free_matrix(char **arr);
 void	count_stuff(t_vars *vars, char *str, int y_idx);
 void	init_coll_info(t_vars *vars, int x_idx, int y_idx);
 void	init_exit_info(t_vars *vars, int x_idx, int y_idx);
 void	init_player_info(t_vars *vars, int x_idx, int y_idx);
 void	validate_map(t_vars *vars);
-void	is_surrounded(t_vars *vars, char **str, int h);
+void	is_surrounded(t_vars *vars, char **visited);
 int		validate_path(t_vars *vars); 
 char	**make_visit_array(t_vars *vars);
 int		is_continued(t_vars *vars);

@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 14:20:46 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/19 22:15:27 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/21 18:16:56 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	init_vars(t_vars *vars, char *map_name)
 	vars->play_coll_cnt = 0; // x
 	vars->coll_cnt = 0; // x
 	vars->exit_cnt = 0;
-	vars->play_str_cnt = 0;
+	vars->play_pos = 0;
 	vars->play_mov_cnt = 0; // x
 	vars->fd = open(map_name, O_RDONLY);
 	vars->mlx = mlx_init();
@@ -136,16 +136,57 @@ void	check_element(t_vars *vars)
 	print_textures(vars->texture);
 }
 
-t_map	*init_map_node(char *str, int h)
+char	*check_blank(const char *s, t_vars *vars)
+{
+	char	*dst;
+	int		len;
+	int		i;
+	int		no_blank;
+	char	*str;
+
+	if (!s)
+		return (0);
+	str = ft_strtrim(s, "\n");
+	len = ft_strlen(str);
+	dst = (char *)malloc(sizeof(char) * (len + 1));
+	if (dst == 0)
+		print_error_exit("malloc error");
+	i = -1;
+	no_blank = 0;
+	while (str[++i])
+	{
+		if (ft_isblank(str[i]))
+			dst[i] = -1;
+		else if (str[i] != '1' && str[i] != '0' && str[i] != 'N' && str[i] != 'S' && str[i] != 'E' && str[i] != 'W')
+			print_error_exit("Invalid map character");
+		else
+		{
+			if (str[i] == 'N' || str[i] == 'S' || str[i] == 'E' || str[i] == 'W')
+			{
+				if (vars->play_pos)
+					print_error_exit("We need only one player");	
+				vars->play_pos = str[i];
+			}
+			dst[i] = str[i];
+			no_blank++;
+		}
+	}
+	dst[i] = '\0';
+	if (!no_blank)
+		print_error_exit("Map is empty");
+	return (dst);
+}
+
+t_map	*init_map_node(char *str, int h, t_vars *vars)
 {
 	t_map	*new;
 
 	new = malloc(sizeof(t_map));
 	if (!new)
 		print_error_exit("malloc error");
-	new->height = h;
-	new->str = ft_strdup(str);
-	new->width = ft_strlen(str) - 1;
+	new->height = h + 1;
+	new->str = check_blank(str, vars);
+	new->width = ft_strlen(new->str);
 	new->next = 0;
 	return (new);
 }
@@ -170,6 +211,7 @@ void	measure_map_size(t_vars *vars)
 	t_map	*map;
 	t_map	*tmp;
 
+
 	str = get_next_line(vars->fd);
 	trimmed = ft_strtrim(str, " \v\r\f\n\t");
 	while (str && !trimmed[0])
@@ -183,7 +225,7 @@ void	measure_map_size(t_vars *vars)
 	free(trimmed);
 	map = 0;
 	h = 0;
-	map = init_map_node(str, h);
+	map = init_map_node(str, h, vars);
 	vars->map_x = map->width;
 	tmp = map;
 	while (str)
@@ -192,15 +234,18 @@ void	measure_map_size(t_vars *vars)
 		str = get_next_line(vars->fd);
 		if (!str)
 			break ;
-		tmp->next = init_map_node(str, ++h);
+		tmp->next = init_map_node(str, ++h, vars);
 		tmp = tmp->next;
 		if (tmp->width > vars->map_x)
 			vars->map_x = tmp->width;
 	}
 	close(vars->fd);
-	vars->map_y = h;
+	vars->map_y = h + 1;
+	if (!vars->play_pos)
+		print_error_exit("No player");
 	print_maplst(map);
 	printf("map_x: %d, map_y: %d\n", vars->map_x, vars->map_y);
+	init_map(vars, map);
 }
 
 void print_strs(char **strs)

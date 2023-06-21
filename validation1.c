@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 19:13:59 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/19 21:04:47 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/21 18:13:27 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,59 +32,79 @@
 // 	return (1);
 // }
 
-void	is_surrounded(t_vars *vars, char **str, int h)
+void	is_surrounded(t_vars *vars, char **visited)
 {
-	int	i;
-	int	j;
-
-	i = 0;
-	while (str[i])
+	const int	dy[4] = {-1, 1, 0, 0};
+	const int	dx[4] = {0, 0, -1, 1};
+	int			i;
+	int			x;
+	int			y;
+	int			cx;
+	int			cy;
+	
+	y = -1;
+	while (++y < vars->map_y)
 	{
-		j = 0;
-		while (str[i][j])
+		x = -1;
+		while (++x < vars->map_x)
 		{
-			if (str[i][j] != '1' && str[i][j] != '0' && str[i][j] != 'N' && str[i][j] != 'S' && str[i][j] != 'E' && str[i][j] != 'W')
+			if (vars->new_map[y][x] == -1)
 			{
-				print_error_exit("Invalid map character");
+				i = -1;
+				while (++i < 4)
+				{
+					cx = x + dx[i];
+					cy = y + dy[i];
+					if (cx < 0 || cy < 0 || cx >= vars->map_x || cy >= vars->map_y)
+						continue ;
+					if (vars->new_map[cy][cx] != -1 && vars->new_map[cy][cx] != '1')
+						print_error_exit("Map is not surrounded by wall");
+					visited[y][x] = 'T';
+				}
 			}
-			if (h == 0 || h == vars->map_y - 1)
-			{
-				if (str[i][j] != '1')
-					print_error_exit("Not surrounded by walls 1");
-			}
-			else if (j == 0 || j == (int)(ft_strlen(str[i]) - 1))
-			{
-				if (str[i][j] != '1')
-					print_error_exit("Not surrounded by walls 2");
-			}
-			j++;
 		}
-		i++;
 	}
+}
+
+char	**make_visit_array(t_vars *vars)
+{
+	int		i;
+	int		j;
+	char	**check_array;
+
+	j = 0;
+	check_array = (char **)malloc(sizeof(char *) * (vars->map_y + 1));
+	while (j < vars->map_y)
+	{
+		check_array[j] = (char *)malloc(sizeof(char) * vars->map_x + 1);
+		i = 0;
+		while (i < vars->map_x)
+		{
+			// if (vars->new_map[j][i] != -1)
+			// 	check_array[j][i] = vars->new_map[j][i];
+			// else
+				check_array[j][i] = 'F';
+			i++;
+		}
+		check_array[j][i] = '\0';
+		j++;
+	}
+	check_array[j] = 0;
+	return (check_array);
 }
 
 void	validate_map(t_vars *vars)
 {
-	char	**tmp;
-	int		h;
+	char	**visited;
 
-	h = 0;
-	while (h < vars->map_y)
-	{
-		tmp = ft_split(vars->new_map[h], -1);
-		is_surrounded(vars, tmp, h);
-		h++;
-	}
+	visited = make_visit_array(vars);
+	is_surrounded(vars, visited);
+
 }
 
 int	is_correct_count(t_vars *vars)
 {
-	if (vars->play_str_cnt != 1)
-	{
-		vars->err_msg = "We need One Player";
-		return (0);
-	}
-	else if (vars->exit_cnt != 1)
+	if (vars->exit_cnt != 1)
 	{
 		vars->err_msg = "We need One Exit";
 		return (0);

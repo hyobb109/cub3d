@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 15:53:36 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/16 16:20:14 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/21 15:35:04 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,5 @@ void	init_player_info(t_vars *vars, int x_idx, int y_idx)
 {
 	vars->play_x = x_idx;
 	vars->play_y = y_idx;
-	vars->play_str_cnt += 1;
 	append_front(vars->invalid_path_deque, vars->play_x, vars->play_y);
 }

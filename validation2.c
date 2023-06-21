@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:07:23 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/16 16:20:22 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/21 17:56:17 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,28 +92,4 @@ int	bfs_detail(t_vars *vars, t_elem *cur_elem,
 		i++;
 	}
 	return (vars->check_result);
-}
-
-char	**make_visit_array(t_vars *vars)
-{
-	int		i;
-	int		j;
-	char	**check_array;
-
-	j = 0;
-	check_array = (char **)malloc(sizeof(char *) * (vars->map_y + 1));
-	while (j < vars->map_y)
-	{
-		check_array[j] = (char *)malloc(sizeof(char) * vars->map_x + 1);
-		i = 0;
-		while (i < vars->map_x)
-		{
-			check_array[j][i] = 'F';
-			i++;
-		}
-		check_array[j][i] = '\0';
-		j++;
-	}
-	check_array[j] = 0;
-	return (check_array);
 }
