@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
+/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/12 11:11:16 by yunjcho           #+#    #+#             */
-/*   Updated: 2022/07/23 18:41:27 by yunjcho          ###   ########.fr       */
+/*   Updated: 2023/06/21 14:48:45 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ static char	*ft_insert_str(char const *s, char c)
 	len = ft_split_strlen(s, c);
 	str = (char *)malloc(sizeof(char) * (len + 1));
 	if (str == 0)
-		return (0);
+		print_error_exit("malloc error");
 	while (i < len)
 	{
 		str[i] = s[i];
@@ -59,20 +59,6 @@ static char	*ft_insert_str(char const *s, char c)
 	}
 	str[i] = '\0';
 	return (str);
-}
-
-static char	**ft_free(char **arr)
-{
-	int	i;
-
-	i = 0;
-	while (arr[i])
-	{
-		free(arr[i]);
-		i++;
-	}
-	free (arr);
-	return (0);
 }
 
 char	**ft_split(char const *s, char c)
@@ -85,7 +71,7 @@ char	**ft_split(char const *s, char c)
 	i = 0;
 	arr = (char **)malloc(sizeof(char *) * (get_size(s, c) + 1));
 	if (arr == 0)
-		return (0);
+		print_error_exit("malloc error");
 	while (*s)
 	{
 		while (*s && (*s == c))
@@ -94,7 +80,7 @@ char	**ft_split(char const *s, char c)
 		{
 			arr[i] = ft_insert_str(s, c);
 			if (!arr[i])
-				return (ft_free(arr));
+				print_error_exit("malloc error");
 			i++;
 		}
 		while (*s && (*s != c))

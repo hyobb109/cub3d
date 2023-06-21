@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/16 18:15:13 by hyobicho          #+#    #+#             */
-/*   Updated: 2023/06/16 19:58:46 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/21 14:46:05 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,6 @@ char	**ft_split2(char *str, char *charset)
 	cnt = cntstr(str, charset);
 	res = (char **)malloc(sizeof(char *) * (cnt + 1));
 	if (res == NULL)
-		print_error_exit(0);
+		print_error_exit("malloc error");
 	return (result(res, str, charset, cnt));
 }

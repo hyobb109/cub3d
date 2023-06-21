@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strtrim.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
+/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/12 11:10:49 by yunjcho           #+#    #+#             */
-/*   Updated: 2022/07/23 18:40:59 by yunjcho          ###   ########.fr       */
+/*   Updated: 2023/06/21 14:45:14 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ char	*ft_strtrim(char const *s1, char const *set)
 	n = 0;
 	arr = (char *)malloc(sizeof(char) * (end - start + 2));
 	if (arr == 0)
-		return (0);
+		print_error_exit("malloc error");
 	while (start < end + 1)
 	{
 		arr[n] = s1[start];
