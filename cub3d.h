@@ -11,19 +11,18 @@
 # include "./gnl/get_next_line.h"
 
 # define BLOCK_SIZE 64
+# define MINIMAP_SIZE 10
 # define KEY_ESC 53
 # define KEY_W 13
 # define KEY_A 0
 # define KEY_S 1
 # define KEY_D 2
-# define KEY_IVT 2
-# define EXIT_IVT 17
+# define KEY_EVT 2
+# define EXIT_EVT 17
 # define NO	1
 # define SO 2
 # define WE 3
 # define EA 4
-# define FLOOR 5
-# define CEILING 6
 
 typedef struct s_elem
 {
@@ -66,10 +65,20 @@ typedef struct s_map
 	struct s_map	*next;
 }	t_map;
 
+typedef struct s_img
+{
+	void	*ptr;
+	char	*addr;
+	int		bpp;
+	int		len;
+	int		endian;
+}	t_img;
+
 typedef struct s_vars
 {
 	void	*mlx;
 	void	*win;
+	t_img	img;
 	char	**new_map;
 	char	*err_msg;
 	int		fd;
@@ -130,7 +139,7 @@ int		is_stuff(t_vars *vars);
 int		bfs_detail(t_vars *vars, t_elem *cur_elem, t_deque *check_queue, \
 					char **check_array);
 int		paint_map(t_vars *vars);
-void	put_image_to_window(t_texture **head, t_vars *vars, char map_code);
+void	put_image_to_window(t_vars *vars, char map_code);
 void	move_player(t_vars *vars, int keycode);
 int		key_hook(int keycode, t_vars *vars);
 int		ft_exit(void);

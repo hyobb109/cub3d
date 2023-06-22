@@ -6,7 +6,7 @@
 #    By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/28 17:12:07 by yunjcho           #+#    #+#              #
-#    Updated: 2023/06/16 17:31:02 by hyobicho         ###   ########.fr        #
+#    Updated: 2023/06/22 21:14:09 by hyobicho         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,7 +37,7 @@ $(LIBFT):
 	@$(MAKE) -C ./libft all
 
 %.o: %.c
-	$(CC) $(CFLAGS) -I mlx -I gnl -I libft -c $< -o $@
+	$(CC) $(CFLAGS) -I mlx2 -I gnl -I libft -c $< -o $@
 
 $(NAME): $(OBJS) $(LIBFT)
 	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -I gnl -L mlx -l mlx -framework OpenGL -framework AppKit -o $(NAME)

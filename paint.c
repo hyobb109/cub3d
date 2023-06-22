@@ -1,24 +1,21 @@
-// /* ************************************************************************** */
-// /*                                                                            */
-// /*                                                        :::      ::::::::   */
-// /*   paint.c                                            :+:      :+:    :+:   */
-// /*                                                    +:+ +:+         +:+     */
-// /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
-// /*                                                +#+#+#+#+#+   +#+           */
-// /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-// /*   Updated: 2023/06/16 21:36:42 by hyobicho         ###   ########.fr       */
-// /*                                                                            */
-// /* ************************************************************************** */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   paint.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
+/*   Updated: 2023/06/22 22:32:27 by hyobicho         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-// #include "cub3d.h"
+#include "cub3d.h"
 
 // int	paint_map(t_vars *vars)
 // {
-// 	t_texture		*head;
 // 	char		*str;
 
-// 	head = NULL;
-// 	save_element(vars, tmp);
 // 	vars->y_idx = 0;
 // 	vars->hei = 0;
 // 	while (vars->y_idx < vars->map_y)
@@ -28,94 +25,121 @@
 // 		vars->wid = 0;
 // 		while (vars->x_idx < vars->map_x && str[vars->x_idx])
 // 		{
-// 			put_image_to_window(&head, vars, str[vars->x_idx]);
+// 			put_image_to_window(vars, str[vars->x_idx]);
 // 			vars->x_idx++;
 // 			if (vars->x_idx == vars->map_x)
 // 				vars->hei += BLOCK_SIZE;
 // 		}
 // 		vars->y_idx++;
 // 	}
-// 	delete_images(&head);
+// 	delete_images(&vars->texture);
 // 	return (0);
 // }
 
-// void	put_image_to_window(t_texture **head, t_vars *vars, char map_code)
-// {
-// 	t_texture	*back_img;
-// 	t_texture	*stuff_img;
+void	my_mlx_pixel_put(t_vars *vars, int x, int y, int color)
+{
+	char	*dst;
 
-// 	stuff_img = 0;
-// 	back_img = 0;
-// 	back_img = find_image_node(head, vars, 'B');
-// 	mlx_put_image_to_window(vars->mlx, vars->win,
-// 		back_img->img, vars->wid, vars->hei);
-// 	if (map_code != '0')
-// 	{
-// 		stuff_img = find_image_node(head, vars, map_code);
-// 		mlx_put_image_to_window(vars->mlx, vars->win,
-// 			stuff_img->img, vars->wid, vars->hei);
-// 	}
-// 	vars->wid += BLOCK_SIZE;
-// }
+	dst = vars->img.addr + (y * vars->img.len + x * (vars->img.bpp / 8));
+	*(unsigned int *)dst = color;
+}
 
-// void	check_exit(t_vars *vars)
-// {
-// 	if (vars->new_map[vars->play_y][vars->play_x] == 'E'
-// 		&& vars->coll_cnt == vars->play_coll_cnt)
-// 	{
-// 		ft_putendl_fd("Congratuation!", 1);
-// 		exit(1);
-// 	}
-// 	else if (vars->new_map[vars->play_y][vars->play_x] == 'C')
-// 	{
-// 		vars->new_map[vars->play_y][vars->play_x] = '0';
-// 		paint_map(vars);
-// 		vars->play_coll_cnt++;
-// 	}
-// }
+int	paint_map(t_vars *vars)
+{
+	int	h;
+	int w;
+	int	f_color;
+	int	c_color;
 
-// void	move_player(t_vars *vars, int keycode)
-// {
-// 	vars->new_map[vars->play_y][vars->play_x] = '0';
-// 	if (keycode == KEY_W)
-// 		vars->play_y -= 1;
-// 	else if (keycode == KEY_A)
-// 		vars->play_x -= 1;
-// 	else if (keycode == KEY_S)
-// 		vars->play_y += 1;
-// 	else if (keycode == KEY_D)
-// 		vars->play_x += 1;
-// 	vars->play_mov_cnt++;
-// 	check_exit(vars);
-// 	vars->new_map[vars->play_y][vars->play_x] = 'P';
-// 	if (vars->coll_cnt != vars->play_coll_cnt
-// 		&& (vars->play_x != vars->exit_x_back
-// 			|| vars->play_y != vars->exit_y_back))
-// 		vars->new_map[vars->exit_y_back][vars->exit_x_back] = 'E';
-// 	mlx_clear_window(vars->mlx, vars->win);
-// 	paint_map(vars);
-// }
+	f_color = vars->floor->r * 256 * 256 + vars->floor->g * 256 + vars->floor->b;
+	c_color = vars->ceiling->r * 256 * 256 + vars->ceiling->g * 256 + vars->ceiling->b;
+	// printf("color : %d %x\n", f_color, f_color);
+	h = -1;
+	while (++h < vars->map_y * MINIMAP_SIZE)
+	{
+		w = -1;
+		while (++w < vars->map_x * MINIMAP_SIZE)
+		{
+			if (vars->new_map[h / MINIMAP_SIZE][w / MINIMAP_SIZE] == -1)
+				my_mlx_pixel_put(vars, w, h, c_color);
+			else if (vars->new_map[h / MINIMAP_SIZE][w / MINIMAP_SIZE] == '0')
+				my_mlx_pixel_put(vars, w, h, f_color);
+			else if (vars->new_map[h / MINIMAP_SIZE][w / MINIMAP_SIZE] == '1')
+				my_mlx_pixel_put(vars, w, h, 0xa0a0a0);
+			else if (h / MINIMAP_SIZE == vars->play_y && w / MINIMAP_SIZE == vars->play_x)
+				my_mlx_pixel_put(vars, w, h, 0x00ffcc);
+		}
+	}
+	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.ptr, 0, 0);
+	return (0);
+}
 
-// int	key_hook(int keycode, t_vars *vars)
-// {
-// 	if (keycode == KEY_ESC)
-// 	{
-// 		mlx_destroy_window(vars->mlx, vars->win);
-// 		exit(0);
-// 	}
-// 	else if (keycode == KEY_W && vars->play_y > 0
-// 		&& vars->new_map[vars->play_y - 1][vars->play_x] != '1')
-// 		move_player(vars, keycode);
-// 	else if (keycode == KEY_A && vars->play_x > 0
-// 		&& vars->new_map[vars->play_y][vars->play_x - 1] != '1')
-// 		move_player(vars, keycode);
-// 	else if (keycode == KEY_S && vars->play_y < vars->map_y
-// 		&& vars->new_map[vars->play_y + 1][vars->play_x] != '1')
-// 		move_player(vars, keycode);
-// 	else if (keycode == KEY_D && vars->play_x < vars->map_x
-// 		&& vars->new_map[vars->play_y][vars->play_x + 1] != '1')
-// 		move_player(vars, keycode);
-// 	ft_putnbr_fd(vars->play_mov_cnt, 1);
-// 	write(1, "\n", 1);
-// 	return (0);
-// }
+// t_texture *find_image_node(t_texture **head, t_vars *vars, );
+
+
+
+
+void	put_image_to_window(t_vars *vars, char map_code)
+{
+	if (map_code == 0)
+		
+	// }
+	vars->wid += BLOCK_SIZE;
+	// }
+}
+
+void	check_exit(t_vars *vars)
+{
+	if (vars->new_map[vars->play_y][vars->play_x] == 'E'
+		&& vars->coll_cnt == vars->play_coll_cnt)
+	{
+		ft_putendl_fd("Congratuation!", 1);
+		exit(1);
+	}
+	else if (vars->new_map[vars->play_y][vars->play_x] == 'C')
+	{
+		vars->new_map[vars->play_y][vars->play_x] = '0';
+		paint_map(vars);
+		vars->play_coll_cnt++;
+	}
+}
+
+void	move_player(t_vars *vars, int keycode)
+{
+	vars->new_map[vars->play_y][vars->play_x] = '0';
+	if (keycode == KEY_W)
+		vars->play_y -= 1;
+	else if (keycode == KEY_A)
+		vars->play_x -= 1;
+	else if (keycode == KEY_S)
+		vars->play_y += 1;
+	else if (keycode == KEY_D)
+		vars->play_x += 1;
+	vars->new_map[vars->play_y][vars->play_x] = vars->play_pos;
+	mlx_clear_window(vars->mlx, vars->win);
+	paint_map(vars);
+}
+
+int	key_hook(int keycode, t_vars *vars)
+{
+	if (keycode == KEY_ESC)
+	{
+		mlx_destroy_window(vars->mlx, vars->win);
+		exit(0);
+	}
+	else if (keycode == KEY_W && vars->play_y > 0
+		&& vars->new_map[vars->play_y - 1][vars->play_x] != '1')
+		move_player(vars, keycode);
+	else if (keycode == KEY_A && vars->play_x > 0
+		&& vars->new_map[vars->play_y][vars->play_x - 1] != '1')
+		move_player(vars, keycode);
+	else if (keycode == KEY_S && vars->play_y < vars->map_y
+		&& vars->new_map[vars->play_y + 1][vars->play_x] != '1')
+		move_player(vars, keycode);
+	else if (keycode == KEY_D && vars->play_x < vars->map_x
+		&& vars->new_map[vars->play_y][vars->play_x + 1] != '1')
+		move_player(vars, keycode);
+	ft_putnbr_fd(vars->play_mov_cnt, 1);
+	write(1, "\n", 1);
+	return (0);
+}

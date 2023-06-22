@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 14:20:46 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/21 18:16:56 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/22 22:18:58 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,13 @@ void	init_vars(t_vars *vars, char *map_name)
 		print_error_exit(0);
 }
 
+int	is_dup_color(t_color *ceiling, t_color *floor)
+{
+	if (ceiling->r == floor->r && ceiling->g == floor->g && ceiling->b == floor->b)
+		return (1);
+	return (0);
+}
+
 void	save_color(t_vars *vars, char **tmp)
 {
 	int		cnt;
@@ -69,6 +76,8 @@ void	save_color(t_vars *vars, char **tmp)
 		vars->ceiling->r = ft_rgb_atoi(tmp[1]);
 		vars->ceiling->g = ft_rgb_atoi(tmp[2]);
 		vars->ceiling->b = ft_rgb_atoi(tmp[3]);
+		if (vars->floor && is_dup_color(vars->ceiling, vars->floor))
+			print_error_exit("The floor and ceiling colors must be different");
 		printf("type: %s r: %d, g: %d, b: %d\n", tmp[0], vars->ceiling->r, vars->ceiling->g, vars->ceiling->b);
 	}
 	else if (!ft_strncmp(tmp[0], "F", 2))
@@ -81,6 +90,8 @@ void	save_color(t_vars *vars, char **tmp)
 		vars->floor->r = ft_rgb_atoi(tmp[1]);
 		vars->floor->g = ft_rgb_atoi(tmp[2]);
 		vars->floor->b = ft_rgb_atoi(tmp[3]);
+		if (vars->ceiling && is_dup_color(vars->ceiling, vars->floor))
+			print_error_exit("The floor and ceiling colors must be different");
 		printf("type: %s r: %d, g: %d, b: %d\n", tmp[0], vars->floor->r, vars->floor->g, vars->floor->b);
 	}
 	else

@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 16:20:57 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/19 19:13:33 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/21 20:29:19 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ void	save_element(t_vars *vars, char **texture)
 	{
 		if (!ft_strncmp(lst->id, texture[0], 3))
 			print_error_exit("This texture identifier already exists");
+		if (!ft_strncmp(lst->file_name, texture[1], ft_strlen(texture[1])))
+			print_error_exit("This texture file already exists");
 		lst = lst->next;
 	}
 	texture_lstadd_back(vars, texture);
