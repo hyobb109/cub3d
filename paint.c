@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/22 22:32:27 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/23 15:13:16 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,20 @@ void	my_mlx_pixel_put(t_vars *vars, int x, int y, int color)
 	*(unsigned int *)dst = color;
 }
 
+void	paint_minimap(int h, int w, int f_color, int c_color, t_vars *vars)
+{
+	if (h == 0 || h == vars->map_y * MINIMAP_SIZE - 1 || w == 0 || w == vars->map_x * MINIMAP_SIZE - 1)
+		my_mlx_pixel_put(vars, w, h, 0xff0000);
+	else if (vars->new_map[h / MINIMAP_SIZE][w / MINIMAP_SIZE] == -1)
+		my_mlx_pixel_put(vars, w, h, c_color);
+	else if (vars->new_map[h / MINIMAP_SIZE][w / MINIMAP_SIZE] == '0')
+		my_mlx_pixel_put(vars, w, h, f_color);
+	else if (vars->new_map[h / MINIMAP_SIZE][w / MINIMAP_SIZE] == '1')
+		my_mlx_pixel_put(vars, w, h, 0xa0a0a0);
+	else if (h / MINIMAP_SIZE == vars->play_y && w / MINIMAP_SIZE == vars->play_x)
+		my_mlx_pixel_put(vars, w, h, 0x00ffcc);
+}
+
 int	paint_map(t_vars *vars)
 {
 	int	h;
@@ -55,18 +69,20 @@ int	paint_map(t_vars *vars)
 	c_color = vars->ceiling->r * 256 * 256 + vars->ceiling->g * 256 + vars->ceiling->b;
 	// printf("color : %d %x\n", f_color, f_color);
 	h = -1;
-	while (++h < vars->map_y * MINIMAP_SIZE)
+	while (++h < vars->map_y * BLOCK_SIZE)
 	{
 		w = -1;
-		while (++w < vars->map_x * MINIMAP_SIZE)
+		while (++w < vars->map_x * BLOCK_SIZE)
 		{
-			if (vars->new_map[h / MINIMAP_SIZE][w / MINIMAP_SIZE] == -1)
+			if (h < vars->map_y * MINIMAP_SIZE && w <  vars->map_x * MINIMAP_SIZE)
+				paint_minimap(h, w, f_color, c_color, vars);
+			else if (vars->new_map[h / BLOCK_SIZE][w / BLOCK_SIZE] == -1)
 				my_mlx_pixel_put(vars, w, h, c_color);
-			else if (vars->new_map[h / MINIMAP_SIZE][w / MINIMAP_SIZE] == '0')
+			else if (vars->new_map[h / BLOCK_SIZE][w / BLOCK_SIZE] == '0')
 				my_mlx_pixel_put(vars, w, h, f_color);
-			else if (vars->new_map[h / MINIMAP_SIZE][w / MINIMAP_SIZE] == '1')
+			else if (vars->new_map[h / BLOCK_SIZE][w / BLOCK_SIZE] == '1')
 				my_mlx_pixel_put(vars, w, h, 0xa0a0a0);
-			else if (h / MINIMAP_SIZE == vars->play_y && w / MINIMAP_SIZE == vars->play_x)
+			else if (h / BLOCK_SIZE == vars->play_y && w / BLOCK_SIZE == vars->play_x)
 				my_mlx_pixel_put(vars, w, h, 0x00ffcc);
 		}
 	}

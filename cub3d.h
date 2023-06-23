@@ -86,8 +86,8 @@ typedef struct s_vars
 	int		map_y;
 	int		hei;
 	int		wid;
-	int		play_x; // x
-	int		play_y; // x
+	int		play_x;
+	int		play_y;
 	char	play_pos;
 	int		play_mov_cnt; // x
 	int		play_coll_cnt; // x
