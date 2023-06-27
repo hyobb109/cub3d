@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 15:44:59 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/21 20:40:46 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/27 23:30:09 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	init_map(t_vars *vars, t_map *map)
 				print_error_exit("Map is not surrounded by wall");
 			else
 				vars->new_map[y_idx][x_idx] = tmp->str[x_idx];
-			if (tmp->str[x_idx] == vars->play_pos)
+			if (x_idx < ft_strlen(tmp->str) && tmp->str[x_idx] == vars->play_pos)
 			{
 				vars->play_x = x_idx;
 				vars->play_y = y_idx;

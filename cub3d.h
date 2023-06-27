@@ -88,6 +88,8 @@ typedef struct s_vars
 	int		map_y;
 	int		height;
 	int		width;
+	double	posX;
+	double	posY;
 	int		play_x;
 	int		play_y;
 	char	play_pos;

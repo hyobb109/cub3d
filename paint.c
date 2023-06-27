@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/27 22:02:11 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/27 23:41:45 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,6 @@ void	paint_bg(t_vars *vars)
 int	paint_map(t_vars *vars)
 {
 	int x;
-	double posX;
-	double posY;
 	int		mapX;
 	int		mapY;
 	// player 방향에 맞춰서 초기화
@@ -115,13 +113,13 @@ int	paint_map(t_vars *vars)
 	int	drawEnd;
 	paint_bg(vars);
 	// printf("ceiling: %d %x, floor : %d %x\n", vars->ceiling, vars->floor);
-	posX = vars->play_x;
-	posY = vars->play_y;
+	vars->posX = vars->play_x + 0.5;
+	vars->posY = vars->play_y + 0.5;
 	x = -1;
 	while (++x < vars->width)
 	{
-		mapX = (int)posX;
-		mapY = (int)posY;
+		mapX = (int)vars->posX;
+		mapY = (int)vars->posY;
 		camX = 2 * x / (double)(vars->width) - 1;
 		raydirX = dirX + planeX * camX;
 		raydirY = dirY + planeY * camX;
@@ -130,22 +128,22 @@ int	paint_map(t_vars *vars)
 		if (raydirX > 0)
 		{
 			stepX = 1;
-			sideDistX = (mapX + 1 - posX) * deltaDistX;
+			sideDistX = (mapX + 1 - vars->posX) * deltaDistX;
 		}	
 		else
 		{
 			stepX = -1;
-			sideDistX = (posX - mapX) * deltaDistX;
+			sideDistX = (vars->posX - mapX) * deltaDistX;
 		}
 		if (raydirY > 0)
 		{
 			stepY = 1;
-			sideDistY = (mapY + 1 - posY) * deltaDistY;
+			sideDistY = (mapY + 1 - vars->posY) * deltaDistY;
 		}
 		else
 		{
 			stepY = -1;
-			sideDistY = (posY - mapY) * deltaDistY;
+			sideDistY = (vars->posY - mapY) * deltaDistY;
 		}
 		hit = 0;
 		while (!hit)
@@ -167,19 +165,19 @@ int	paint_map(t_vars *vars)
 		}
 		if (side == X_SIDE)
 		{
-			perpWallDist = (mapX - posX + (1 - stepX) / 2) / raydirX;
+			perpWallDist = (mapX - vars->posX + (1 - stepX) / 2) / raydirX;
 		}
 		else if (side == Y_SIDE)
 		{
-			perpWallDist = (mapY - posY + (1 - stepY) / 2) / raydirY;
+			perpWallDist = (mapY - vars->posY + (1 - stepY) / 2) / raydirY;
 		}
 		lineHeight = (int)((vars->height / 2) / perpWallDist);
-		drawStart = -lineHeight / 2 + (vars->height / 2) / 2;
+		drawStart = -lineHeight / 2 + vars->height / 2;
 		if (drawStart < 0)
 			drawStart = 0;
-		drawEnd = lineHeight / 2 + (vars->height / 2) / 2;
-		if (drawEnd >= (vars->height / 2))
-			drawEnd = (vars->height / 2) - 1;
+		drawEnd = lineHeight / 2 + vars->height / 2;
+		if (drawEnd >= vars->height)
+			drawEnd = vars->height - 1;
 		if (vars->new_map[mapY][mapX] == '1')
 		{
 			if (side == Y_SIDE)
@@ -244,7 +242,5 @@ int	key_hook(int keycode, t_vars *vars)
 	else if (keycode == KEY_D && vars->play_x < vars->map_x
 		&& vars->new_map[vars->play_y][vars->play_x + 1] != '1')
 		move_player(vars, keycode);
-	ft_putnbr_fd(vars->play_mov_cnt, 1);
-	write(1, "\n", 1);
 	return (0);
 }
