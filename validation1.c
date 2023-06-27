@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 19:13:59 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/21 18:13:27 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/26 16:46:12 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,8 @@ void	validate_map(t_vars *vars)
 
 	visited = make_visit_array(vars);
 	is_surrounded(vars, visited);
-
+	vars->width = BLOCK_SIZE * vars->map_x;
+	vars->height = BLOCK_SIZE * vars->map_y;
 }
 
 int	is_correct_count(t_vars *vars)

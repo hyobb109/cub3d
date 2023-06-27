@@ -12,6 +12,8 @@
 
 # define BLOCK_SIZE 64
 # define MINIMAP_SIZE 10
+# define X_SIDE 0
+# define Y_SIDE 1
 # define KEY_ESC 53
 # define KEY_W 13
 # define KEY_A 0
@@ -84,8 +86,8 @@ typedef struct s_vars
 	int		fd;
 	int		map_x;
 	int		map_y;
-	int		hei;
-	int		wid;
+	int		height;
+	int		width;
 	int		play_x;
 	int		play_y;
 	char	play_pos;
@@ -103,9 +105,11 @@ typedef struct s_vars
 	int		y_idx;
 	int		cur_x;
 	int		cur_y;
+	int		floor;
+	int 	ceiling;
 	t_texture	*texture;
-	t_color		*floor;
-	t_color		*ceiling;
+	// t_color		*floor;
+	// t_color		*ceiling;
 	t_deque	*invalid_path_deque; // x
 	t_elem	*from_elem; // x
 	t_elem	*to_elem; // x

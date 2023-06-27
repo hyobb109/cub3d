@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 14:20:46 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/22 22:18:58 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/23 16:23:42 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ void	init_vars(t_vars *vars, char *map_name)
 {	
 	vars->invalid_path_deque = malloc_deque(); // x
 	vars->texture = NULL;
-	vars->floor = NULL;
-	vars->ceiling = NULL;
+	vars->floor = -1;
+	vars->ceiling = -1;
 	vars->check_result = 0; // x
 	vars->new_map = NULL;
 	vars->map_x = -1;
@@ -50,13 +50,6 @@ void	init_vars(t_vars *vars, char *map_name)
 		print_error_exit(0);
 }
 
-int	is_dup_color(t_color *ceiling, t_color *floor)
-{
-	if (ceiling->r == floor->r && ceiling->g == floor->g && ceiling->b == floor->b)
-		return (1);
-	return (0);
-}
-
 void	save_color(t_vars *vars, char **tmp)
 {
 	int		cnt;
@@ -68,31 +61,19 @@ void	save_color(t_vars *vars, char **tmp)
 		print_error_exit("Color error");
 	if (!ft_strncmp(tmp[0], "C", 2))
 	{
-		if (vars->ceiling)
+		if (vars->ceiling != -1)
 			print_error_exit("ceiling color already exists");
-		vars->ceiling = malloc(sizeof(t_color));
-		if (!vars->ceiling)
-			print_error_exit("malloc error");
-		vars->ceiling->r = ft_rgb_atoi(tmp[1]);
-		vars->ceiling->g = ft_rgb_atoi(tmp[2]);
-		vars->ceiling->b = ft_rgb_atoi(tmp[3]);
-		if (vars->floor && is_dup_color(vars->ceiling, vars->floor))
+		vars->ceiling = ft_rgb_atoi(tmp[1]) * 256 * 256 + ft_rgb_atoi(tmp[2]) * 256 + ft_rgb_atoi(tmp[3]);
+		if (vars->ceiling == vars->floor)
 			print_error_exit("The floor and ceiling colors must be different");
-		printf("type: %s r: %d, g: %d, b: %d\n", tmp[0], vars->ceiling->r, vars->ceiling->g, vars->ceiling->b);
 	}
 	else if (!ft_strncmp(tmp[0], "F", 2))
 	{
-		if (vars->floor)
+		if (vars->floor != -1)
 			print_error_exit("floor color already exists");
-		vars->floor = malloc(sizeof(t_color));
-		if (!vars->floor)
-			print_error_exit("malloc error");
-		vars->floor->r = ft_rgb_atoi(tmp[1]);
-		vars->floor->g = ft_rgb_atoi(tmp[2]);
-		vars->floor->b = ft_rgb_atoi(tmp[3]);
-		if (vars->ceiling && is_dup_color(vars->ceiling, vars->floor))
+		vars->floor = ft_rgb_atoi(tmp[1]) * 256 * 256 + ft_rgb_atoi(tmp[2]) * 256 + ft_rgb_atoi(tmp[3]);
+		if (vars->ceiling == vars->floor)
 			print_error_exit("The floor and ceiling colors must be different");
-		printf("type: %s r: %d, g: %d, b: %d\n", tmp[0], vars->floor->r, vars->floor->g, vars->floor->b);
 	}
 	else
 		print_error_exit("Color type error");
@@ -122,7 +103,6 @@ void	check_element(t_vars *vars)
 			// print_strs(tmp);
 			save_color(vars, tmp);
 			cnt++;
-			printf("===color %d ===\n", cnt);
 		}
 		// element 저장 -> 
 		else
@@ -133,7 +113,6 @@ void	check_element(t_vars *vars)
 				// print_strs(tmp);
 				save_element(vars, tmp);
 				cnt++;
-				printf("===texture %d ===\n", cnt);
 			}
 		}
 		free_matrix(tmp);
@@ -209,7 +188,7 @@ void print_maplst(t_map *map)
 	tmp = map;
 	while (tmp)
 	{
-		printf("height: %d, width: %d, str: %s\n", tmp->height, tmp->width, tmp->str);
+		// printf("height: %d, width: %d, str: %s\n", tmp->height, tmp->width, tmp->str);
 		tmp = tmp->next;
 	}
 }
