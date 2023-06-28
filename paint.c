@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   paint.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/28 14:52:53 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/28 19:44:22 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,12 @@ void	paint_player(t_vars *vars, int width, int height)
 		while (++w < width)
 		{
 			if ((vars->posX * MINIMAP_SIZE > w && vars->posX * MINIMAP_SIZE < w + MINIMAP_SIZE) && (vars->posY * MINIMAP_SIZE > h && vars->posY * MINIMAP_SIZE < h + MINIMAP_SIZE))
-				my_mlx_pixel_put(vars, w, h, 0xff0000);
+			{
+				my_mlx_pixel_put(vars, w + MINIMAP_SIZE / 2, h + MINIMAP_SIZE / 2, 0xff0000);
+			}
 		}
 	}
 }
-
 
 void	paint_minimap(t_vars *vars, int width, int height)
 {
@@ -134,7 +135,6 @@ int	paint_map(t_vars *vars)
 	int		x;
 	t_ray	r;
 	paint_bg(vars);
-	// printf("ceiling: %d %x, floor : %d %x\n", vars->ceiling, vars->floor);
 	x = -1;
 	while (++x < vars->width)
 	{
@@ -212,44 +212,6 @@ int	paint_map(t_vars *vars)
 	return (0);
 }
 
-void	check_exit(t_vars *vars)
-{
-	if (vars->new_map[vars->play_y][vars->play_x] == 'E'
-		&& vars->coll_cnt == vars->play_coll_cnt)
-	{
-		ft_putendl_fd("Congratuation!", 1);
-		exit(1);
-	}
-	else if (vars->new_map[vars->play_y][vars->play_x] == 'C')
-	{
-		vars->new_map[vars->play_y][vars->play_x] = '0';
-		paint_map(vars);
-		vars->play_coll_cnt++;
-	}
-}
-
-void	move_player(t_vars *vars, int keycode)
-{
-	if (vars->new_map[vars->play_y][vars->play_x] != '1')
-		vars->new_map[vars->play_y][vars->play_x] = '0';
-	if (keycode == KEY_W && vars->play_y > 0
-		&& vars->new_map[vars->play_y - 1][vars->play_x] != '1')
-		vars->play_y -= 1;
-	else if (keycode == KEY_A && vars->play_x > 0
-		&& vars->new_map[vars->play_y][vars->play_x - 1] != '1')
-		vars->play_x -= 1;
-	else if (keycode == KEY_S && vars->play_y < vars->map_y
-		&& vars->new_map[vars->play_y + 1][vars->play_x] != '1')
-		vars->play_y += 1;
-	else if (keycode == KEY_D && vars->play_x < vars->map_x
-		&& vars->new_map[vars->play_y][vars->play_x + 1] != '1')
-		vars->play_x += 1;
-	if (vars->new_map[vars->play_y][vars->play_x] != '1')
-		vars->new_map[vars->play_y][vars->play_x] = vars->play_pos;
-	// mlx_clear_window(vars->mlx, vars->win);
-	// paint_map(vars);
-}
-
 int	key_hook(int keycode, t_vars *vars)
 {
 	double	oldDirX;
@@ -263,16 +225,28 @@ int	key_hook(int keycode, t_vars *vars)
 	else if (keycode == KEY_W)
 	{
 		if (vars->new_map[(int)(vars->posY)][(int)(vars->posX + vars->p.dirX * 0.1)] != '1')
+		{
+			printf("*[%d][%d] = %c\n",(int)(vars->posY),(int)(vars->posX + vars->p.dirX * 0.1), vars->new_map[(int)(vars->posY)][(int)(vars->posX + vars->p.dirX * 0.1)]);
 			vars->posX += vars->p.dirX * 0.1;
+		}
 		if (vars->new_map[(int)(vars->posY + vars->p.dirY * 0.1)][(int)(vars->posX)] != '1')
+		{
+			printf("**[%d][%d] = %c\n",(int)(vars->posY),(int)(vars->posX + vars->p.dirX * 0.1), vars->new_map[(int)(vars->posY)][(int)(vars->posX + vars->p.dirX * 0.1)]);
 			vars->posY += vars->p.dirY * 0.1;
+		}
 	}
 	else if (keycode == KEY_S)
 	{
 		if (vars->new_map[(int)(vars->posY)][(int)(vars->posX - vars->p.dirX * 0.1)] != '1')
+		{
+			printf("***[%d][%d] = %c\n",(int)(vars->posY),(int)(vars->posX + vars->p.dirX * 0.1), vars->new_map[(int)(vars->posY)][(int)(vars->posX + vars->p.dirX * 0.1)]);
 			vars->posX -= vars->p.dirX * 0.1;
+		}
 		if (vars->new_map[(int)(vars->posY - vars->p.dirY * 0.1)][(int)(vars->posX)] != '1')
+		{
+			printf("****[%d][%d] = %c\n",(int)(vars->posY),(int)(vars->posX + vars->p.dirX * 0.1), vars->new_map[(int)(vars->posY)][(int)(vars->posX + vars->p.dirX * 0.1)]);
 			vars->posY -= vars->p.dirY * 0.1;
+		}
 	}
 	else if (keycode == KEY_A)
 	{
