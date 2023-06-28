@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   image1.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 16:20:57 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/21 20:29:19 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/28 20:45:25 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,27 @@ t_texture	*texture_lstadd_back(t_vars *vars, char **texture)
 	return (new_node);
 }
 
+void	make_texture_matrix(t_texture *new_node)
+{
+	int		idx;
+
+	new_node->colors = malloc(sizeof(char *) * (new_node->img_height + 1));
+	if (!new_node->colors)
+		print_error_exit("Malloc Error");
+	idx = -1;
+	while (++idx < new_node->img_height + 1)
+	{
+		new_node->colors[idx] = malloc(sizeof(char) * (new_node->img_width + 1));
+		if (!new_node->colors[idx])
+			print_error_exit("Malloc Error");
+		new_node->colors[idx] = mlx_get_data_addr(new_node->img, &new_node->img->bpp, &new_node->img_width, &new_node->img->endian);
+		printf("new_node->filename : %s\n", new_node->file_name);
+		printf("new_node->colors[%d]: %s, len : %d\n", idx, new_node->colors[idx], new_node->img_width);
+	}
+	new_node->colors[idx] = 0;
+}
+
+
 t_texture	*init_texture_node(t_texture *new_node, t_vars *vars, char **texture)
 {
 	get_texture_file_name(new_node, texture);
@@ -64,6 +85,7 @@ t_texture	*init_texture_node(t_texture *new_node, t_vars *vars, char **texture)
 		new_node->file_name, &new_node->img_width, &new_node->img_height);
 	if (!new_node->img)
 		print_error_exit("Texture file path error");
+	make_texture_matrix(new_node);
 	return (new_node);
 }
 

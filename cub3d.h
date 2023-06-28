@@ -41,25 +41,6 @@ typedef struct s_deque
 	int		len;
 }	t_deque;
 
-typedef struct s_texture
-{
-	char				*id;
-	void				*img;
-	char				*file_name;
-	int					img_width;
-	int					img_height;
-	struct s_texture	*prev;
-	struct s_texture	*next;
-}	t_texture;
-
-typedef struct s_map
-{
-	int		height;
-	int		width;
-	char	*str;
-	struct s_map	*next;
-}	t_map;
-
 typedef struct s_img
 {
 	void	*ptr;
@@ -68,6 +49,27 @@ typedef struct s_img
 	int		len;
 	int		endian;
 }	t_img;
+
+typedef struct s_texture
+{
+	char				*id;
+	t_img				*img;
+	char				*file_name;
+	char				**colors;
+	int					img_width;
+	int					img_height;
+	struct s_texture	*prev;
+	struct s_texture	*next;
+}	t_texture;
+
+typedef struct s_map
+{
+	int				height;
+	int				width;
+	char			*str;
+	struct s_map	*next;
+}	t_map;
+
 
 typedef struct s_player
 {
@@ -106,43 +108,43 @@ typedef struct s_ray
 
 typedef struct s_vars
 {
-	void	*mlx;
-	void	*win;
-	t_img	img;
+	void		*mlx;
+	void		*win;
+	t_img		img;
 	t_player	p;
-	char	**new_map;
-	char	*err_msg;
-	int		fd;
-	int		map_x;
-	int		map_y;
-	int		height;
-	int		width;
-	double	posX;
-	double	posY;
-	int		play_x;
-	int		play_y;
-	char	play_pos;
-	int		play_mov_cnt; // x
-	int		play_coll_cnt; // x
-	int		coll_cnt; // x
-	int		coll_x; // x
-	int		coll_y; // x
-	int		exit_cnt; // x 
-	int		exit_x; // x
-	int		exit_y; // x
-	int		exit_x_back; // x
-	int		exit_y_back; // x
-	int		x_idx;
-	int		y_idx;
-	int		cur_x;
-	int		cur_y;
-	int		floor;
-	int 	ceiling;
+	char		**new_map;
+	char		*err_msg;
+	int			fd;
+	int			map_x;
+	int			map_y;
+	int			height;
+	int			width;
+	double		posX;
+	double		posY;
+	int			play_x;
+	int			play_y;
+	char		play_pos;
+	int			play_mov_cnt; // x
+	int			play_coll_cnt; // x
+	int			coll_cnt; // x
+	int			coll_x; // x
+	int			coll_y; // x
+	int			exit_cnt; // x 
+	int			exit_x; // x
+	int			exit_y; // x
+	int			exit_x_back; // x
+	int			exit_y_back; // x
+	int			x_idx;
+	int			y_idx;
+	int			cur_x;
+	int			cur_y;
+	int			floor;
+	int 		ceiling;
 	t_texture	*texture;
-	t_deque	*invalid_path_deque; // x
-	t_elem	*from_elem; // x
-	t_elem	*to_elem; // x
-	int		check_result; // 밖에서 처리
+	t_deque		*invalid_path_deque; // x
+	t_elem		*from_elem; // x
+	t_elem		*to_elem; // x
+	int			check_result; // 밖에서 처리
 }	t_vars;
 
 t_deque	*malloc_deque(void);

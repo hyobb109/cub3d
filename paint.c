@@ -6,7 +6,7 @@
 /*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/28 19:44:22 by yunjcho          ###   ########.fr       */
+/*   Updated: 2023/06/28 20:28:44 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,12 +226,12 @@ int	key_hook(int keycode, t_vars *vars)
 	{
 		if (vars->new_map[(int)(vars->posY)][(int)(vars->posX + vars->p.dirX * 0.1)] != '1')
 		{
-			printf("*[%d][%d] = %c\n",(int)(vars->posY),(int)(vars->posX + vars->p.dirX * 0.1), vars->new_map[(int)(vars->posY)][(int)(vars->posX + vars->p.dirX * 0.1)]);
+			// printf("*[%d][%d] = %c\n",(int)(vars->posY),(int)(vars->posX + vars->p.dirX * 0.1), vars->new_map[(int)(vars->posY)][(int)(vars->posX + vars->p.dirX * 0.1)]);
 			vars->posX += vars->p.dirX * 0.1;
 		}
 		if (vars->new_map[(int)(vars->posY + vars->p.dirY * 0.1)][(int)(vars->posX)] != '1')
 		{
-			printf("**[%d][%d] = %c\n",(int)(vars->posY),(int)(vars->posX + vars->p.dirX * 0.1), vars->new_map[(int)(vars->posY)][(int)(vars->posX + vars->p.dirX * 0.1)]);
+			// printf("**[%d][%d] = %c\n",(int)(vars->posY),(int)(vars->posX + vars->p.dirX * 0.1), vars->new_map[(int)(vars->posY)][(int)(vars->posX + vars->p.dirX * 0.1)]);
 			vars->posY += vars->p.dirY * 0.1;
 		}
 	}
@@ -239,12 +239,12 @@ int	key_hook(int keycode, t_vars *vars)
 	{
 		if (vars->new_map[(int)(vars->posY)][(int)(vars->posX - vars->p.dirX * 0.1)] != '1')
 		{
-			printf("***[%d][%d] = %c\n",(int)(vars->posY),(int)(vars->posX + vars->p.dirX * 0.1), vars->new_map[(int)(vars->posY)][(int)(vars->posX + vars->p.dirX * 0.1)]);
+			// printf("***[%d][%d] = %c\n",(int)(vars->posY),(int)(vars->posX + vars->p.dirX * 0.1), vars->new_map[(int)(vars->posY)][(int)(vars->posX + vars->p.dirX * 0.1)]);
 			vars->posX -= vars->p.dirX * 0.1;
 		}
 		if (vars->new_map[(int)(vars->posY - vars->p.dirY * 0.1)][(int)(vars->posX)] != '1')
 		{
-			printf("****[%d][%d] = %c\n",(int)(vars->posY),(int)(vars->posX + vars->p.dirX * 0.1), vars->new_map[(int)(vars->posY)][(int)(vars->posX + vars->p.dirX * 0.1)]);
+			// printf("****[%d][%d] = %c\n",(int)(vars->posY),(int)(vars->posX + vars->p.dirX * 0.1), vars->new_map[(int)(vars->posY)][(int)(vars->posX + vars->p.dirX * 0.1)]);
 			vars->posY -= vars->p.dirY * 0.1;
 		}
 	}
