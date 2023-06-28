@@ -29,6 +29,7 @@ int	main(int ac, char **av)
 	check_element(&vars);
 	measure_map_size(&vars);
 	validate_map(&vars);
+	init_player(&vars);
 	printf("valid\n");
 	vars.win = mlx_new_window(vars.mlx, vars.width, vars.height, "cub3D");
 	// if (!vars.win)

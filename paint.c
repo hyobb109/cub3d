@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/27 23:41:45 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/28 14:52:53 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,24 @@ void	my_mlx_pixel_put(t_vars *vars, int x, int y, int color)
 	dst = vars->img.addr + (y * vars->img.len + x * (vars->img.bpp / 8));
 	*(unsigned int *)dst = color;
 }
+
+void	paint_player(t_vars *vars, int width, int height)
+{
+	int	h;
+	int	w;
+
+	h = -1;
+	while (++h < height)
+	{
+		w = -1;
+		while (++w < width)
+		{
+			if ((vars->posX * MINIMAP_SIZE > w && vars->posX * MINIMAP_SIZE < w + MINIMAP_SIZE) && (vars->posY * MINIMAP_SIZE > h && vars->posY * MINIMAP_SIZE < h + MINIMAP_SIZE))
+				my_mlx_pixel_put(vars, w, h, 0xff0000);
+		}
+	}
+}
+
 
 void	paint_minimap(t_vars *vars, int width, int height)
 {
@@ -37,14 +55,14 @@ void	paint_minimap(t_vars *vars, int width, int height)
 			cy = h / MINIMAP_SIZE;
 			if (h == 0 || h == height - 1 || w == 0 || w == width - 1)
 				my_mlx_pixel_put(vars, w, h, 0xff0000);
-			else if (vars->new_map[cy][cx] == -1)
-				my_mlx_pixel_put(vars, w, h, vars->ceiling);
-			else if (vars->new_map[cy][cx] == '0')
-				my_mlx_pixel_put(vars, w, h, vars->floor);
 			else if (vars->new_map[cy][cx] == '1')
 				my_mlx_pixel_put(vars, w, h, 0xa0a0a0);
-			else if (cy == vars->play_y && cx == vars->play_x)
-				my_mlx_pixel_put(vars, w, h, 0x00ffcc);
+			// else if ((vars->posX * MINIMAP_SIZE > w && vars->posX * MINIMAP_SIZE < w + MINIMAP_SIZE / 2) && (vars->posY * MINIMAP_SIZE > h && vars->posY * MINIMAP_SIZE < h + MINIMAP_SIZE / 2))
+			// 	my_mlx_pixel_put(vars, w, h, 0xff0000);
+			else if (vars->new_map[cy][cx] == -1)
+				my_mlx_pixel_put(vars, w, h, vars->ceiling);
+			else
+				my_mlx_pixel_put(vars, w, h, vars->floor);
 		}
 	}
 }
@@ -79,114 +97,117 @@ void	paint_bg(t_vars *vars)
 	}
 }
 
+void	init_player(t_vars *vars)
+{
+	if (vars->play_pos == 'N')
+	{
+		vars->p.dirX = 0;
+		vars->p.dirY = -1;
+		vars->p.planeX = 0.66;
+		vars->p.planeY = 0;
+	}
+	else if (vars->play_pos == 'S')
+	{
+		vars->p.dirX = 0;
+		vars->p.dirY = 1;
+		vars->p.planeX = 0.66;
+		vars->p.planeY = 0;
+	}
+	else if (vars->play_pos == 'E')
+	{
+		vars->p.dirX = 1;
+		vars->p.dirY = 0;
+		vars->p.planeX = 0;
+		vars->p.planeY = 0.66;
+	}
+	else if (vars->play_pos == 'W')
+	{
+		vars->p.dirX = -1;
+		vars->p.dirY = 0;
+		vars->p.planeX = 0;
+		vars->p.planeY = 0.66;
+	}
+}
+
 int	paint_map(t_vars *vars)
 {
-	int x;
-	int		mapX;
-	int		mapY;
-	// player 방향에 맞춰서 초기화
-	double dirX = 0;
-	double dirY = -1;
-	double planeX = 0.66;
-	double planeY = 0;
-	// 
-	double	camX;
-	double	raydirX;
-	double	raydirY;
-	// 처음 벽 충돌까지 거리
-	double sideDistX;
-	double sideDistY;
-	// 벽 충돌까지 거리 변화량
-	double deltaDistX;
-	double deltaDistY;
-	// 플레이어 위치에서 카메라평면과 벽과의 수직거리 계산
-	double perpWallDist;
-	// 이동방향
-	int stepX;
-	int stepY;
-	// 벽 충돌 여부
-	int hit;
-	// 충돌한 면
-	int side;
-	int	lineHeight;
-	int	drawStart;
-	int	drawEnd;
+	int		x;
+	t_ray	r;
 	paint_bg(vars);
 	// printf("ceiling: %d %x, floor : %d %x\n", vars->ceiling, vars->floor);
-	vars->posX = vars->play_x + 0.5;
-	vars->posY = vars->play_y + 0.5;
 	x = -1;
 	while (++x < vars->width)
 	{
-		mapX = (int)vars->posX;
-		mapY = (int)vars->posY;
-		camX = 2 * x / (double)(vars->width) - 1;
-		raydirX = dirX + planeX * camX;
-		raydirY = dirY + planeY * camX;
-		deltaDistX = fabs(1 / raydirX);
-		deltaDistY = fabs(1 / raydirY);
-		if (raydirX > 0)
+		r.mapX = (int)vars->posX;
+		r.mapY = (int)vars->posY;
+		r.camX = 2 * x / (double)(vars->width) - 1;
+		r.raydirX = vars->p.dirX + vars->p.planeX * r.camX;
+		r.raydirY = vars->p.dirY + vars->p.planeY * r.camX;
+		r.deltaDistX = fabs(1 / r.raydirX);
+		r.deltaDistY = fabs(1 / r.raydirY);
+		if (r.raydirX > 0)
 		{
-			stepX = 1;
-			sideDistX = (mapX + 1 - vars->posX) * deltaDistX;
+			r.stepX = 1;
+			r.sideDistX = (r.mapX + 1 - vars->posX) * r.deltaDistX;
 		}	
 		else
 		{
-			stepX = -1;
-			sideDistX = (vars->posX - mapX) * deltaDistX;
+			r.stepX = -1;
+			r.sideDistX = (vars->posX - r.mapX) * r.deltaDistX;
 		}
-		if (raydirY > 0)
+		if (r.raydirY > 0)
 		{
-			stepY = 1;
-			sideDistY = (mapY + 1 - vars->posY) * deltaDistY;
+			r.stepY = 1;
+			r.sideDistY = (r.mapY + 1 - vars->posY) * r.deltaDistY;
 		}
 		else
 		{
-			stepY = -1;
-			sideDistY = (vars->posY - mapY) * deltaDistY;
+			r.stepY = -1;
+			r.sideDistY = (vars->posY - r.mapY) * r.deltaDistY;
 		}
-		hit = 0;
-		while (!hit)
+		r.hit = 0;
+		while (!r.hit)
 		{
-			if (sideDistX < sideDistY)
+			if (r.sideDistX < r.sideDistY)
 			{
-				sideDistX += deltaDistX;
-				mapX += stepX;
-				side = X_SIDE;
+				r.sideDistX += r.deltaDistX;
+				r.mapX += r.stepX;
+				r.side = X_SIDE;
 			}
 			else
 			{
-				sideDistY += deltaDistY;
-				mapY += stepY;
-				side = Y_SIDE;
+				r.sideDistY += r.deltaDistY;
+				r.mapY += r.stepY;
+				r.side = Y_SIDE;
 			}
-			if (vars->new_map[mapY][mapX] == '1')
-				hit = 1;
+			if (vars->new_map[r.mapY][r.mapX] == '1')
+				r.hit = 1;
 		}
-		if (side == X_SIDE)
+		if (r.side == X_SIDE)
 		{
-			perpWallDist = (mapX - vars->posX + (1 - stepX) / 2) / raydirX;
+			r.perpWallDist = (r.mapX - vars->posX + (1 - r.stepX) / 2) / r.raydirX;
 		}
-		else if (side == Y_SIDE)
+		else if (r.side == Y_SIDE)
 		{
-			perpWallDist = (mapY - vars->posY + (1 - stepY) / 2) / raydirY;
+			r.perpWallDist = (r.mapY - vars->posY + (1 - r.stepY) / 2) / r.raydirY;
 		}
-		lineHeight = (int)((vars->height / 2) / perpWallDist);
-		drawStart = -lineHeight / 2 + vars->height / 2;
-		if (drawStart < 0)
-			drawStart = 0;
-		drawEnd = lineHeight / 2 + vars->height / 2;
-		if (drawEnd >= vars->height)
-			drawEnd = vars->height - 1;
-		if (vars->new_map[mapY][mapX] == '1')
+		r.lineHeight = (int)((vars->height / 2) / r.perpWallDist);
+		r.drawStart = -r.lineHeight / 2 + vars->height / 2;
+		if (r.drawStart < 0)
+			r.drawStart = 0;
+		r.drawEnd = r.lineHeight / 2 + vars->height / 2;
+		if (r.drawEnd >= vars->height)
+			r.drawEnd = vars->height - 1;
+		if (vars->new_map[r.mapY][r.mapX] == '1')
 		{
-			if (side == Y_SIDE)
-				draw_vertical_line(vars, x, drawStart, drawEnd, 0x33CCCC);
+			if (r.side == Y_SIDE)
+				draw_vertical_line(vars, x, r.drawStart, r.drawEnd, 0x33CCCC);
 			else
-				draw_vertical_line(vars, x, drawStart, drawEnd, 0x66FFFF);
+				draw_vertical_line(vars, x, r.drawStart, r.drawEnd, 0x66FFFF);
 		}
 	}
 	paint_minimap(vars, vars->map_x * MINIMAP_SIZE, vars->map_y * MINIMAP_SIZE);
+	paint_player(vars, vars->map_x * MINIMAP_SIZE, vars->map_y * MINIMAP_SIZE);
 	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.ptr, 0, 0);
 	return (0);
 }
@@ -209,38 +230,67 @@ void	check_exit(t_vars *vars)
 
 void	move_player(t_vars *vars, int keycode)
 {
-	vars->new_map[vars->play_y][vars->play_x] = '0';
-	if (keycode == KEY_W)
+	if (vars->new_map[vars->play_y][vars->play_x] != '1')
+		vars->new_map[vars->play_y][vars->play_x] = '0';
+	if (keycode == KEY_W && vars->play_y > 0
+		&& vars->new_map[vars->play_y - 1][vars->play_x] != '1')
 		vars->play_y -= 1;
-	else if (keycode == KEY_A)
+	else if (keycode == KEY_A && vars->play_x > 0
+		&& vars->new_map[vars->play_y][vars->play_x - 1] != '1')
 		vars->play_x -= 1;
-	else if (keycode == KEY_S)
+	else if (keycode == KEY_S && vars->play_y < vars->map_y
+		&& vars->new_map[vars->play_y + 1][vars->play_x] != '1')
 		vars->play_y += 1;
-	else if (keycode == KEY_D)
+	else if (keycode == KEY_D && vars->play_x < vars->map_x
+		&& vars->new_map[vars->play_y][vars->play_x + 1] != '1')
 		vars->play_x += 1;
-	vars->new_map[vars->play_y][vars->play_x] = vars->play_pos;
-	mlx_clear_window(vars->mlx, vars->win);
-	paint_map(vars);
+	if (vars->new_map[vars->play_y][vars->play_x] != '1')
+		vars->new_map[vars->play_y][vars->play_x] = vars->play_pos;
+	// mlx_clear_window(vars->mlx, vars->win);
+	// paint_map(vars);
 }
 
 int	key_hook(int keycode, t_vars *vars)
 {
+	double	oldDirX;
+	double	oldPlaneX;
+
 	if (keycode == KEY_ESC)
 	{
 		mlx_destroy_window(vars->mlx, vars->win);
 		exit(0);
 	}
-	else if (keycode == KEY_W && vars->play_y > 0
-		&& vars->new_map[vars->play_y - 1][vars->play_x] != '1')
-		move_player(vars, keycode);
-	else if (keycode == KEY_A && vars->play_x > 0
-		&& vars->new_map[vars->play_y][vars->play_x - 1] != '1')
-		move_player(vars, keycode);
-	else if (keycode == KEY_S && vars->play_y < vars->map_y
-		&& vars->new_map[vars->play_y + 1][vars->play_x] != '1')
-		move_player(vars, keycode);
-	else if (keycode == KEY_D && vars->play_x < vars->map_x
-		&& vars->new_map[vars->play_y][vars->play_x + 1] != '1')
-		move_player(vars, keycode);
+	else if (keycode == KEY_W)
+	{
+		if (vars->new_map[(int)(vars->posY)][(int)(vars->posX + vars->p.dirX * 0.1)] != '1')
+			vars->posX += vars->p.dirX * 0.1;
+		if (vars->new_map[(int)(vars->posY + vars->p.dirY * 0.1)][(int)(vars->posX)] != '1')
+			vars->posY += vars->p.dirY * 0.1;
+	}
+	else if (keycode == KEY_S)
+	{
+		if (vars->new_map[(int)(vars->posY)][(int)(vars->posX - vars->p.dirX * 0.1)] != '1')
+			vars->posX -= vars->p.dirX * 0.1;
+		if (vars->new_map[(int)(vars->posY - vars->p.dirY * 0.1)][(int)(vars->posX)] != '1')
+			vars->posY -= vars->p.dirY * 0.1;
+	}
+	else if (keycode == KEY_A)
+	{
+		oldDirX = vars->p.dirX;
+		vars->p.dirX = vars->p.dirX * cos(30 * PI / 180) + vars->p.dirY * sin(30 * PI / 180);
+		vars->p.dirY = -oldDirX * sin(30 * PI / 180) + vars->p.dirY * cos(30 * PI / 180);
+		oldPlaneX = vars->p.planeX;
+		vars->p.planeX = vars->p.planeX * cos(30 * PI / 180) + vars->p.planeY * sin(30 * PI / 180);
+		vars->p.planeY = -oldPlaneX * sin(30 * PI / 180) + vars->p.planeY * cos(30 * PI / 180);
+	}
+	else if (keycode == KEY_D)
+	{
+		oldDirX = vars->p.dirX;
+		vars->p.dirX = vars->p.dirX * cos(30 * PI / 180) - vars->p.dirY * sin(30 * PI / 180);
+		vars->p.dirY = oldDirX * sin(30 * PI / 180) + vars->p.dirY * cos(30 * PI / 180);
+		oldPlaneX = vars->p.planeX;
+		vars->p.planeX = vars->p.planeX * cos(30 * PI / 180) - vars->p.planeY * sin(30 * PI / 180);
+		vars->p.planeY = oldPlaneX * sin(30 * PI / 180) + vars->p.planeY * cos(30 * PI / 180);
+	}
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 15:44:59 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/27 23:30:09 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/28 13:46:06 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ void	init_map(t_vars *vars, t_map *map)
 	vars->new_map = (char **)malloc(sizeof(char *) * (vars->map_y + 1));
 	if (!vars->new_map)
 		print_error_exit("malloc error");
-	y_idx = 0;
-	while (y_idx < vars->map_y)
+	y_idx = -1;
+	while (++y_idx < vars->map_y)
 	{
 		vars->new_map[y_idx] = (char *)malloc(sizeof(char) * (vars->map_x + 1));
 		if (!vars->new_map[y_idx])
@@ -50,15 +50,16 @@ void	init_map(t_vars *vars, t_map *map)
 				print_error_exit("Map is not surrounded by wall");
 			else
 				vars->new_map[y_idx][x_idx] = tmp->str[x_idx];
-			if (x_idx < ft_strlen(tmp->str) && tmp->str[x_idx] == vars->play_pos)
+			if (x_idx < tmp->width && tmp->str[x_idx] == vars->play_pos)
 			{
 				vars->play_x = x_idx;
 				vars->play_y = y_idx;
+				vars->posX = x_idx + 0.5;
+				vars->posY = y_idx + 0.5;
 			}
 		}
 		vars->new_map[y_idx][x_idx] = '\0';
 		tmp = tmp->next;
-		y_idx++;
 	}
 	vars->new_map[y_idx] = 0;
 	print_strs(vars->new_map);

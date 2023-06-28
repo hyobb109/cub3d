@@ -25,7 +25,7 @@
 # define SO 2
 # define WE 3
 # define EA 4
-
+# define PI 3.141592
 typedef struct s_elem
 {
 	int				x;
@@ -52,13 +52,6 @@ typedef struct s_texture
 	struct s_texture	*next;
 }	t_texture;
 
-typedef struct s_color
-{
-	int				r;
-	int				g;
-	int				b;
-}	t_color;
-
 typedef struct s_map
 {
 	int		height;
@@ -76,11 +69,47 @@ typedef struct s_img
 	int		endian;
 }	t_img;
 
+typedef struct s_player
+{
+	double	dirX;
+	double	dirY;
+	double	planeX;
+	double	planeY;
+}	t_player;
+
+typedef struct s_ray
+{
+	int		mapX;
+	int		mapY;
+	double	camX;
+	double	raydirX;
+	double	raydirY;
+	// 처음 벽 충돌까지 거리
+	double	sideDistX;
+	double	sideDistY;
+	// 벽 충돌까지 거리 변화량
+	double	deltaDistX;
+	double	deltaDistY;
+	// 플레이어 위치에서 카메라평면과 벽과의 수직거리 계산
+	double	perpWallDist;
+	// 이동방향
+	int		stepX;
+	int		stepY;
+	// 벽 충돌 여부
+	int		hit;
+	// 충돌한 면
+	int		side;
+	int		lineHeight;
+	int		drawStart;
+	int		drawEnd;
+}	t_ray;
+
 typedef struct s_vars
 {
 	void	*mlx;
 	void	*win;
 	t_img	img;
+	t_player	p;
 	char	**new_map;
 	char	*err_msg;
 	int		fd;
@@ -110,8 +139,6 @@ typedef struct s_vars
 	int		floor;
 	int 	ceiling;
 	t_texture	*texture;
-	// t_color		*floor;
-	// t_color		*ceiling;
 	t_deque	*invalid_path_deque; // x
 	t_elem	*from_elem; // x
 	t_elem	*to_elem; // x
@@ -126,7 +153,7 @@ void	append_back(t_deque *deque, int x, int y);
 t_elem	*pop_front(t_deque *deque);
 t_elem	*pop_back(t_deque *deque);
 void	free_deque(t_deque *deque);
-
+void	init_player(t_vars *vars);
 void	check_element(t_vars *vars);
 void	init_vars(t_vars *vars, char *map_name);
 void	measure_map_size(t_vars *vars);
