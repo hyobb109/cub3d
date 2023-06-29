@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/29 16:55:42 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/29 17:00:12 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,6 +166,34 @@ void	paint_walls(t_vars *vars, t_texture *tmp, t_ray r)
 	}
 }
 
+void	paint_walls2(t_vars *vars, t_texture *tmp, t_ray r, int x)
+{
+	int	h;
+	t_color		c;
+
+	tmp->img.addr = mlx_get_data_addr(tmp->img.ptr, &tmp->img.bpp, &tmp->img.len, &tmp->img.endian);
+	h = r.drawStart -1;
+	while (++h < r.drawEnd)
+	{
+		if (tmp->img.endian == 1)
+		{
+			c.t = (int)tmp->img.addr[h * tmp->img.len + x];
+			c.r = (int)tmp->img.addr[h * tmp->img.len + x + 1];
+			c.g = (int)tmp->img.addr[h * tmp->img.len + x + 2];
+			c.b = (int)tmp->img.addr[h * tmp->img.len + x + 3];
+		}
+		else
+		{
+			c.b = (int)tmp->img.addr[h * tmp->img.len + x];
+			c.g = (int)tmp->img.addr[h * tmp->img.len + x + 1];
+			c.r = (int)tmp->img.addr[h * tmp->img.len + x + 2];
+			c.t = (int)tmp->img.addr[h * tmp->img.len + x + 3];
+		}
+		tmp->trgb = c.t * pow(256, 3) + c.r * pow(256, 2) + c.g * 256 + c.b;
+		my_mlx_pixel_put(vars, x, h, tmp->trgb);
+	}
+}
+
 int	paint_map(t_vars *vars)
 {
 	int		x;
@@ -246,29 +274,29 @@ int	paint_map(t_vars *vars)
 		// {
 		// 	r.texY = (int)r.texPos 
 		// }
-		// if (vars->new_map[r.mapY][r.mapX] == '1')
-		// {
-		// 	if (r.mapY > (int)vars->posY)
-		// 	{
-		// 		paint_walls(vars, &vars->texture[SO], r);
-		// 	}
-		// 	else if (r.mapY	< (int)vars->posY)
-		// 	{
-		// 		paint_walls(vars, &vars->texture[NO], r);
-		// 	}
-		// 	else if (r.mapX > (int)vars->posX)
-		// 	{
-		// 		paint_walls(vars, &vars->texture[EA], r);
-		// 	}
-		// 	else if (r.mapX < (int)vars->posX)
-		// 	{
-		// 		paint_walls(vars, &vars->texture[WE], r);
-		// 	}
+		if (vars->new_map[r.mapY][r.mapX] == '1')
+		{
+			if (r.mapY > (int)vars->posY)
+			{
+				paint_walls2(vars, &vars->texture[SO], r, x);
+			}
+			else if (r.mapY	< (int)vars->posY)
+			{
+				paint_walls2(vars, &vars->texture[NO], r, x);
+			}
+			else if (r.mapX > (int)vars->posX)
+			{
+				paint_walls2(vars, &vars->texture[EA], r, x);
+			}
+			else if (r.mapX < (int)vars->posX)
+			{
+				paint_walls2(vars, &vars->texture[WE], r, x);
+			}
 		// 	// if (r.side == Y_SIDE)
 		// 	// 	draw_vertical_line(vars, x, r.drawStart, r.drawEnd, 0x33CCCC);
 		// 	// else
 		// 	// 	draw_vertical_line(vars, x, r.drawStart, r.drawEnd, 0x66FFFF);
-		// }
+		}
 	}
 	paint_minimap(vars, vars->map_x * MINIMAP_SIZE, vars->map_y * MINIMAP_SIZE);
 	paint_player(vars, vars->map_x * MINIMAP_SIZE, vars->map_y * MINIMAP_SIZE);
