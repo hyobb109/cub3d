@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 14:20:46 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/23 16:23:42 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/29 15:50:51 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,23 @@ void	print_error_exit(char *err_msg)
 	exit(1);
 }
 
+void	init_texture(t_vars *vars)
+{
+	int	i;
+
+	i = -1;
+	while (++i < 4)
+	{
+		vars->texture[i].id = 0;
+		vars->texture[i].file_name = 0;
+		vars->texture[i].img_height = 0;
+		vars->texture[i].img_width = 0;
+	}
+}
+
 void	init_vars(t_vars *vars, char *map_name)
 {	
 	vars->invalid_path_deque = malloc_deque(); // x
-	vars->texture = NULL;
 	vars->floor = -1;
 	vars->ceiling = -1;
 	vars->check_result = 0; // x
@@ -48,6 +61,7 @@ void	init_vars(t_vars *vars, char *map_name)
 	vars->mlx = mlx_init();
 	if (!vars->mlx)
 		print_error_exit(0);
+	init_texture(vars);
 }
 
 void	save_color(t_vars *vars, char **tmp)

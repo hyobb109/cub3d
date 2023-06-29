@@ -21,10 +21,10 @@
 # define KEY_D 2
 # define KEY_EVT 2
 # define EXIT_EVT 17
-# define NO	1
-# define SO 2
-# define WE 3
-# define EA 4
+# define NO	0
+# define SO 1
+# define WE 2
+# define EA 3
 # define PI 3.141592
 typedef struct s_elem
 {
@@ -50,16 +50,22 @@ typedef struct s_img
 	int		endian;
 }	t_img;
 
+typedef struct s_color
+{
+	int				t;
+	int				r;
+	int				g;
+	int				b;
+}	t_color;
+
 typedef struct s_texture
 {
 	char				*id;
-	t_img				*img;
+	t_img				img;
 	char				*file_name;
-	char				**colors;
+	int					trgb;
 	int					img_width;
 	int					img_height;
-	struct s_texture	*prev;
-	struct s_texture	*next;
 }	t_texture;
 
 typedef struct s_map
@@ -104,6 +110,13 @@ typedef struct s_ray
 	int		lineHeight;
 	int		drawStart;
 	int		drawEnd;
+	// 벽 텍스쳐
+	int		wall_id;
+	double	wallX;
+	int		texX;
+	int		texY;
+	double	texPos;
+	double	texStep;
 }	t_ray;
 
 typedef struct s_vars
@@ -140,7 +153,7 @@ typedef struct s_vars
 	int			cur_y;
 	int			floor;
 	int 		ceiling;
-	t_texture	*texture;
+	t_texture	texture[4];
 	t_deque		*invalid_path_deque; // x
 	t_elem		*from_elem; // x
 	t_elem		*to_elem; // x

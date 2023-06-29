@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   paint.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
+/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/28 20:28:44 by yunjcho          ###   ########.fr       */
+/*   Updated: 2023/06/29 16:55:42 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	paint_player(t_vars *vars, int width, int height)
 		w = -1;
 		while (++w < width)
 		{
-			if ((vars->posX * MINIMAP_SIZE > w && vars->posX * MINIMAP_SIZE < w + MINIMAP_SIZE) && (vars->posY * MINIMAP_SIZE > h && vars->posY * MINIMAP_SIZE < h + MINIMAP_SIZE))
+			if ((vars->posX * MINIMAP_SIZE > w && vars->posX * MINIMAP_SIZE < w + 3) && (vars->posY * MINIMAP_SIZE > h && vars->posY * MINIMAP_SIZE < h + 3))
 			{
 				my_mlx_pixel_put(vars, w + MINIMAP_SIZE / 2, h + MINIMAP_SIZE / 2, 0xff0000);
 			}
@@ -55,15 +55,15 @@ void	paint_minimap(t_vars *vars, int width, int height)
 			cx = w / MINIMAP_SIZE;
 			cy = h / MINIMAP_SIZE;
 			if (h == 0 || h == height - 1 || w == 0 || w == width - 1)
-				my_mlx_pixel_put(vars, w, h, 0xff0000);
+				my_mlx_pixel_put(vars, w + MINIMAP_SIZE / 2, h + MINIMAP_SIZE / 2, 0xff0000);
 			else if (vars->new_map[cy][cx] == '1')
-				my_mlx_pixel_put(vars, w, h, 0xa0a0a0);
+				my_mlx_pixel_put(vars, w  + MINIMAP_SIZE / 2, h + MINIMAP_SIZE / 2, 0xa0a0a0);
 			// else if ((vars->posX * MINIMAP_SIZE > w && vars->posX * MINIMAP_SIZE < w + MINIMAP_SIZE / 2) && (vars->posY * MINIMAP_SIZE > h && vars->posY * MINIMAP_SIZE < h + MINIMAP_SIZE / 2))
 			// 	my_mlx_pixel_put(vars, w, h, 0xff0000);
 			else if (vars->new_map[cy][cx] == -1)
-				my_mlx_pixel_put(vars, w, h, vars->ceiling);
+				my_mlx_pixel_put(vars, w + MINIMAP_SIZE / 2, h + MINIMAP_SIZE / 2, vars->ceiling);
 			else
-				my_mlx_pixel_put(vars, w, h, vars->floor);
+				my_mlx_pixel_put(vars, w + MINIMAP_SIZE / 2, h + MINIMAP_SIZE / 2, vars->floor);
 		}
 	}
 }
@@ -130,6 +130,42 @@ void	init_player(t_vars *vars)
 	}
 }
 
+void	paint_walls(t_vars *vars, t_texture *tmp, t_ray r)
+{
+	int	h;
+	int	w;
+	int x;
+	t_color		c;
+
+	h = r.drawStart -1;
+	tmp->img.addr = mlx_get_data_addr(tmp->img.ptr, &tmp->img.bpp, &tmp->img.len, &tmp->img.endian);
+	while (++h < r.drawEnd)
+	{
+		x = 0;
+		w = 0;
+		while (w < tmp->img_width * 4)
+		{
+			if (tmp->img.endian == 1)
+			{
+				c.t = (int)tmp->img.addr[h * tmp->img.len + w];
+				c.r = (int)tmp->img.addr[h * tmp->img.len + w + 1];
+				c.g = (int)tmp->img.addr[h * tmp->img.len + w + 2];
+				c.b = (int)tmp->img.addr[h * tmp->img.len + w + 3];
+			}
+			else
+			{
+				c.b = (int)tmp->img.addr[h * tmp->img.len + w];
+				c.g = (int)tmp->img.addr[h * tmp->img.len + w + 1];
+				c.r = (int)tmp->img.addr[h * tmp->img.len + w + 2];
+				c.t = (int)tmp->img.addr[h * tmp->img.len + w + 3];
+			}
+			tmp->trgb = c.t * pow(256, 3) + c.r * pow(256, 2) + c.g * 256 + c.b;
+			my_mlx_pixel_put(vars, x++, h, tmp->trgb);
+			w += 4;
+		}
+	}
+}
+
 int	paint_map(t_vars *vars)
 {
 	int		x;
@@ -186,11 +222,17 @@ int	paint_map(t_vars *vars)
 		if (r.side == X_SIDE)
 		{
 			r.perpWallDist = (r.mapX - vars->posX + (1 - r.stepX) / 2) / r.raydirX;
+			r.wallX = vars->posY + r.perpWallDist * r.raydirY;
 		}
 		else if (r.side == Y_SIDE)
 		{
 			r.perpWallDist = (r.mapY - vars->posY + (1 - r.stepY) / 2) / r.raydirY;
+			r.wallX = vars->posX + r.perpWallDist * r.raydirX;
 		}
+		r.wallX -= floor(r.wallX);
+		r.texX = (int)(r.wallX * (double)BLOCK_SIZE);
+		if ((r.side == X_SIDE && r.raydirX > 0) || (r.side == Y_SIDE && r.raydirY < 0))
+			r.texX = BLOCK_SIZE - r.texX -1;
 		r.lineHeight = (int)((vars->height / 2) / r.perpWallDist);
 		r.drawStart = -r.lineHeight / 2 + vars->height / 2;
 		if (r.drawStart < 0)
@@ -198,13 +240,35 @@ int	paint_map(t_vars *vars)
 		r.drawEnd = r.lineHeight / 2 + vars->height / 2;
 		if (r.drawEnd >= vars->height)
 			r.drawEnd = vars->height - 1;
-		if (vars->new_map[r.mapY][r.mapX] == '1')
-		{
-			if (r.side == Y_SIDE)
-				draw_vertical_line(vars, x, r.drawStart, r.drawEnd, 0x33CCCC);
-			else
-				draw_vertical_line(vars, x, r.drawStart, r.drawEnd, 0x66FFFF);
-		}
+		// r.texStep = 1.0 * BLOCK_SIZE / r.lineHeight;
+		// r.texPos = (r.drawStart - vars->height / 2 + r.lineHeight / 2) * r.texStep;
+		// for (int y = r.drawStart; y < r.drawEnd; y++)
+		// {
+		// 	r.texY = (int)r.texPos 
+		// }
+		// if (vars->new_map[r.mapY][r.mapX] == '1')
+		// {
+		// 	if (r.mapY > (int)vars->posY)
+		// 	{
+		// 		paint_walls(vars, &vars->texture[SO], r);
+		// 	}
+		// 	else if (r.mapY	< (int)vars->posY)
+		// 	{
+		// 		paint_walls(vars, &vars->texture[NO], r);
+		// 	}
+		// 	else if (r.mapX > (int)vars->posX)
+		// 	{
+		// 		paint_walls(vars, &vars->texture[EA], r);
+		// 	}
+		// 	else if (r.mapX < (int)vars->posX)
+		// 	{
+		// 		paint_walls(vars, &vars->texture[WE], r);
+		// 	}
+		// 	// if (r.side == Y_SIDE)
+		// 	// 	draw_vertical_line(vars, x, r.drawStart, r.drawEnd, 0x33CCCC);
+		// 	// else
+		// 	// 	draw_vertical_line(vars, x, r.drawStart, r.drawEnd, 0x66FFFF);
+		// }
 	}
 	paint_minimap(vars, vars->map_x * MINIMAP_SIZE, vars->map_y * MINIMAP_SIZE);
 	paint_player(vars, vars->map_x * MINIMAP_SIZE, vars->map_y * MINIMAP_SIZE);
