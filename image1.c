@@ -6,7 +6,7 @@
 /*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 16:20:57 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/29 17:59:41 by yunjcho          ###   ########.fr       */
+/*   Updated: 2023/06/29 18:36:48 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void	save_wall_colors(t_vars *vars, t_texture *texture)
 	int x;
 	t_color		c;
 
+	(void) vars;
 	texture->colors = malloc(sizeof(int) * texture->img_height);
 	if (!texture->colors)
 		print_error_exit("Malloc Error");
@@ -71,28 +72,17 @@ void	save_element(t_vars *vars, char **texture)
 
 	cnt = 0;
 	while (texture[cnt])
-	{
-		// printf("s: %s, cnt: %d\n", texture[cnt], cnt);
 		cnt++;
-	}
 	if (cnt != 2)
 		print_error_exit("Texture Format error");
 	if (!ft_strncmp(texture[0], "NO", 3))
-	{
 		init_texture_info(vars, texture, NO);
-	}
 	else if (!ft_strncmp(texture[0], "SO", 3))
-	{
 		init_texture_info(vars, texture, SO);
-	}
 	else if (!ft_strncmp(texture[0], "WE", 3))
-	{
 		init_texture_info(vars, texture, WE);
-	}
 	else if (!ft_strncmp(texture[0], "EA", 3))
-	{
 		init_texture_info(vars, texture, EA);
-	}
 	else
 		print_error_exit("Invalid Texture Id");
 }

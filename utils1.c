@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils1.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 14:20:46 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/29 15:50:51 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/29 18:30:15 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,18 +45,12 @@ void	init_texture(t_vars *vars)
 
 void	init_vars(t_vars *vars, char *map_name)
 {	
-	vars->invalid_path_deque = malloc_deque(); // x
 	vars->floor = -1;
 	vars->ceiling = -1;
-	vars->check_result = 0; // x
 	vars->new_map = NULL;
 	vars->map_x = -1;
 	vars->map_y = -1;
-	vars->play_coll_cnt = 0; // x
-	vars->coll_cnt = 0; // x
-	vars->exit_cnt = 0;
 	vars->play_pos = 0;
-	vars->play_mov_cnt = 0; // x
 	vars->fd = open(map_name, O_RDONLY);
 	vars->mlx = mlx_init();
 	if (!vars->mlx)
@@ -93,38 +87,32 @@ void	save_color(t_vars *vars, char **tmp)
 		print_error_exit("Color type error");
 }
 
-void	check_element(t_vars *vars)
+void	check_mapfile(t_vars *vars)
 {
+	int		cnt;
 	char	*str;
 	char	*trimmed;
 	char	**tmp;
-	int		cnt;
 
 	cnt = 0;
 	str = get_next_line(vars->fd);
 	if (!str)
 		print_error_exit("No return value from GNL");
-	// 첫글자가 개행이면 다음 줄 받음
-	// NO, SO, WE, EA, F, C 순서 없이 받음
 	while (str)
 	{
 		trimmed = ft_strtrim(str, " \v\r\f\n\t");
-		// printf("trimmed: %s\n", trimmed);
 		free(str);
 		if (trimmed[0] == 'F' || trimmed[0] == 'C')
 		{
 			tmp = ft_split2(trimmed, " \v\r\f\n\t,");
-			// print_strs(tmp);
 			save_color(vars, tmp);
 			cnt++;
 		}
-		// element 저장 -> 
 		else
 		{
 			tmp = ft_split2(trimmed, " \v\r\f\n\t");
 			if (tmp[0])
 			{
-				// print_strs(tmp);
 				save_element(vars, tmp);
 				cnt++;
 			}
@@ -137,7 +125,8 @@ void	check_element(t_vars *vars)
 	}
 	if (cnt != 6)
 		print_error_exit("Element error");
-	print_textures(vars->texture);
+	measure_map_size(vars);
+	print_textures(vars->texture); //TODO: delete
 }
 
 char	*check_blank(const char *s, t_vars *vars)

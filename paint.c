@@ -6,7 +6,7 @@
 /*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/29 18:01:52 by yunjcho          ###   ########.fr       */
+/*   Updated: 2023/06/29 18:36:22 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,15 +131,18 @@ void	init_player(t_vars *vars)
 }
 
 
-void	paint_walls(t_vars *vars, t_texture *texture, t_ray r, int x)
+void	paint_walls2(t_vars *vars, t_texture *texture, t_ray r, int x)
 {
 	int	h;
 
-	h = r.drawStart -1;
+	(void) texture;
+	(void) x;
+	(void) vars;
+	h = r.drawStart - 1;
 	while (++h < r.drawEnd)
 	{
 		// if (r.side == Y_SIDE)
-		my_mlx_pixel_put(vars, x, h, );
+		// my_mlx_pixel_put(vars, x, h, );
 	}
 }
 

@@ -28,6 +28,7 @@
 # define WE 2
 # define EA 3
 # define PI 3.141592
+
 typedef struct s_elem
 {
 	int				x;
@@ -78,7 +79,6 @@ typedef struct s_map
 	char			*str;
 	struct s_map	*next;
 }	t_map;
-
 
 typedef struct s_player
 {
@@ -172,7 +172,7 @@ t_elem	*pop_front(t_deque *deque);
 t_elem	*pop_back(t_deque *deque);
 void	free_deque(t_deque *deque);
 void	init_player(t_vars *vars);
-void	check_element(t_vars *vars);
+void	check_mapfile(t_vars *vars);
 void	init_vars(t_vars *vars, char *map_name);
 void	measure_map_size(t_vars *vars);
 void	init_map(t_vars *vars, t_map *map);
@@ -202,5 +202,6 @@ t_texture	*init_texture_node(t_texture *new_node, t_vars *vars, char **texture);
 void	delete_images(t_texture **head);
 void	print_textures(t_texture *head);
 void print_strs(char **strs);
+void	paint_walls2(t_vars *vars, t_texture *texture, t_ray r, int x);
 
 #endif
