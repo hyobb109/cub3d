@@ -19,6 +19,8 @@
 # define KEY_A 0
 # define KEY_S 1
 # define KEY_D 2
+# define KEY_LEFT 123
+# define KEY_RIGHT 124
 # define KEY_EVT 2
 # define EXIT_EVT 17
 # define NO	0
@@ -63,6 +65,7 @@ typedef struct s_texture
 	char				*id;
 	t_img				img;
 	char				*file_name;
+	char				**colors;
 	int					trgb;
 	int					img_width;
 	int					img_height;

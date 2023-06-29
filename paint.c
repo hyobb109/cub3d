@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   paint.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/29 17:00:12 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/29 17:50:27 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,6 +190,8 @@ void	paint_walls2(t_vars *vars, t_texture *tmp, t_ray r, int x)
 			c.t = (int)tmp->img.addr[h * tmp->img.len + x + 3];
 		}
 		tmp->trgb = c.t * pow(256, 3) + c.r * pow(256, 2) + c.g * 256 + c.b;
+		if (r.side == Y_SIDE)
+			tmp->trgb /= 2;
 		my_mlx_pixel_put(vars, x, h, tmp->trgb);
 	}
 }
@@ -331,16 +333,36 @@ int	key_hook(int keycode, t_vars *vars)
 	{
 		if (vars->new_map[(int)(vars->posY)][(int)(vars->posX - vars->p.dirX * 0.1)] != '1')
 		{
-			// printf("***[%d][%d] = %c\n",(int)(vars->posY),(int)(vars->posX + vars->p.dirX * 0.1), vars->new_map[(int)(vars->posY)][(int)(vars->posX + vars->p.dirX * 0.1)]);
 			vars->posX -= vars->p.dirX * 0.1;
 		}
 		if (vars->new_map[(int)(vars->posY - vars->p.dirY * 0.1)][(int)(vars->posX)] != '1')
 		{
-			// printf("****[%d][%d] = %c\n",(int)(vars->posY),(int)(vars->posX + vars->p.dirX * 0.1), vars->new_map[(int)(vars->posY)][(int)(vars->posX + vars->p.dirX * 0.1)]);
 			vars->posY -= vars->p.dirY * 0.1;
 		}
 	}
+		else if (keycode == KEY_D)
+	{
+		if (vars->new_map[(int)(vars->posY)][(int)(vars->posX + vars->p.planeX * 0.1)] != '1')
+		{
+			vars->posX += vars->p.planeX * 0.1;
+		}
+		if (vars->new_map[(int)(vars->posY + vars->p.planeY * 0.1)][(int)(vars->posX)] != '1')
+		{
+			vars->posY += vars->p.planeY * 0.1;
+		}
+	}
 	else if (keycode == KEY_A)
+	{
+		if (vars->new_map[(int)(vars->posY)][(int)(vars->posX - vars->p.planeX * 0.1)] != '1')
+		{
+			vars->posX -= vars->p.planeX * 0.1;
+		}
+		if (vars->new_map[(int)(vars->posY - vars->p.planeY * 0.1)][(int)(vars->posX)] != '1')
+		{
+			vars->posY -= vars->p.planeY * 0.1;
+		}
+	}
+	else if (keycode == KEY_LEFT)
 	{
 		oldDirX = vars->p.dirX;
 		vars->p.dirX = vars->p.dirX * cos(30 * PI / 180) + vars->p.dirY * sin(30 * PI / 180);
@@ -349,7 +371,7 @@ int	key_hook(int keycode, t_vars *vars)
 		vars->p.planeX = vars->p.planeX * cos(30 * PI / 180) + vars->p.planeY * sin(30 * PI / 180);
 		vars->p.planeY = -oldPlaneX * sin(30 * PI / 180) + vars->p.planeY * cos(30 * PI / 180);
 	}
-	else if (keycode == KEY_D)
+	else if (keycode == KEY_RIGHT)
 	{
 		oldDirX = vars->p.dirX;
 		vars->p.dirX = vars->p.dirX * cos(30 * PI / 180) - vars->p.dirY * sin(30 * PI / 180);
