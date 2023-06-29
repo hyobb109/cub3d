@@ -65,7 +65,7 @@ typedef struct s_texture
 	char				*id;
 	t_img				img;
 	char				*file_name;
-	char				**colors;
+	int					**colors;
 	int					trgb;
 	int					img_width;
 	int					img_height;

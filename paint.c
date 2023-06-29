@@ -6,7 +6,7 @@
 /*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/29 17:50:27 by yunjcho          ###   ########.fr       */
+/*   Updated: 2023/06/29 18:01:52 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,69 +130,16 @@ void	init_player(t_vars *vars)
 	}
 }
 
-void	paint_walls(t_vars *vars, t_texture *tmp, t_ray r)
+
+void	paint_walls(t_vars *vars, t_texture *texture, t_ray r, int x)
 {
 	int	h;
-	int	w;
-	int x;
-	t_color		c;
 
-	h = r.drawStart -1;
-	tmp->img.addr = mlx_get_data_addr(tmp->img.ptr, &tmp->img.bpp, &tmp->img.len, &tmp->img.endian);
-	while (++h < r.drawEnd)
-	{
-		x = 0;
-		w = 0;
-		while (w < tmp->img_width * 4)
-		{
-			if (tmp->img.endian == 1)
-			{
-				c.t = (int)tmp->img.addr[h * tmp->img.len + w];
-				c.r = (int)tmp->img.addr[h * tmp->img.len + w + 1];
-				c.g = (int)tmp->img.addr[h * tmp->img.len + w + 2];
-				c.b = (int)tmp->img.addr[h * tmp->img.len + w + 3];
-			}
-			else
-			{
-				c.b = (int)tmp->img.addr[h * tmp->img.len + w];
-				c.g = (int)tmp->img.addr[h * tmp->img.len + w + 1];
-				c.r = (int)tmp->img.addr[h * tmp->img.len + w + 2];
-				c.t = (int)tmp->img.addr[h * tmp->img.len + w + 3];
-			}
-			tmp->trgb = c.t * pow(256, 3) + c.r * pow(256, 2) + c.g * 256 + c.b;
-			my_mlx_pixel_put(vars, x++, h, tmp->trgb);
-			w += 4;
-		}
-	}
-}
-
-void	paint_walls2(t_vars *vars, t_texture *tmp, t_ray r, int x)
-{
-	int	h;
-	t_color		c;
-
-	tmp->img.addr = mlx_get_data_addr(tmp->img.ptr, &tmp->img.bpp, &tmp->img.len, &tmp->img.endian);
 	h = r.drawStart -1;
 	while (++h < r.drawEnd)
 	{
-		if (tmp->img.endian == 1)
-		{
-			c.t = (int)tmp->img.addr[h * tmp->img.len + x];
-			c.r = (int)tmp->img.addr[h * tmp->img.len + x + 1];
-			c.g = (int)tmp->img.addr[h * tmp->img.len + x + 2];
-			c.b = (int)tmp->img.addr[h * tmp->img.len + x + 3];
-		}
-		else
-		{
-			c.b = (int)tmp->img.addr[h * tmp->img.len + x];
-			c.g = (int)tmp->img.addr[h * tmp->img.len + x + 1];
-			c.r = (int)tmp->img.addr[h * tmp->img.len + x + 2];
-			c.t = (int)tmp->img.addr[h * tmp->img.len + x + 3];
-		}
-		tmp->trgb = c.t * pow(256, 3) + c.r * pow(256, 2) + c.g * 256 + c.b;
-		if (r.side == Y_SIDE)
-			tmp->trgb /= 2;
-		my_mlx_pixel_put(vars, x, h, tmp->trgb);
+		// if (r.side == Y_SIDE)
+		my_mlx_pixel_put(vars, x, h, );
 	}
 }
 

@@ -3,15 +3,56 @@
 /*                                                        :::      ::::::::   */
 /*   image1.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 16:20:57 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/29 15:59:58 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/29 17:59:41 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
+void	save_wall_colors(t_vars *vars, t_texture *texture)
+{
+	int	h;
+	int	w;
+	int x;
+	t_color		c;
+
+	texture->colors = malloc(sizeof(int) * texture->img_height);
+	if (!texture->colors)
+		print_error_exit("Malloc Error");
+	h = -1;
+	texture->img.addr = mlx_get_data_addr(texture->img.ptr, &texture->img.bpp, &texture->img.len, &texture->img.endian);
+	while (++h < texture->img_height)
+	{
+		x = 0;
+		w = 0;
+		texture->colors[h] = malloc(sizeof(int) * texture->img_width);
+		while (w < texture->img_width * 4)
+		{
+			if (!texture->colors[h])
+				print_error_exit("Malloc Error");
+			if (texture->img.endian == 1)
+			{
+				c.t = (int)texture->img.addr[h * texture->img.len + w];
+				c.r = (int)texture->img.addr[h * texture->img.len + w + 1];
+				c.g = (int)texture->img.addr[h * texture->img.len + w + 2];
+				c.b = (int)texture->img.addr[h * texture->img.len + w + 3];
+			}
+			else
+			{
+				c.b = (int)texture->img.addr[h * texture->img.len + w];
+				c.g = (int)texture->img.addr[h * texture->img.len + w + 1];
+				c.r = (int)texture->img.addr[h * texture->img.len + w + 2];
+				c.t = (int)texture->img.addr[h * texture->img.len + w + 3];
+			}
+			texture->trgb = c.t * pow(256, 3) + c.r * pow(256, 2) + c.g * 256 + c.b;
+			texture->colors[h][x] = texture->trgb;
+			w += 4;
+		}
+	}
+}
 
 void	init_texture_info(t_vars *vars, char **texture, int texture_id)
 {
@@ -21,6 +62,7 @@ void	init_texture_info(t_vars *vars, char **texture, int texture_id)
 	vars->texture[texture_id].file_name = ft_strdup(texture[1]);
 	vars->texture[texture_id].img.ptr = mlx_xpm_file_to_image(vars->mlx, \
 		vars->texture[texture_id].file_name, &vars->texture[texture_id].img_width, &vars->texture[texture_id].img_height);
+	save_wall_colors(vars, &vars->texture[texture_id]);
 }
 
 void	save_element(t_vars *vars, char **texture)
