@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   image1.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
+/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 16:20:57 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/29 18:36:48 by yunjcho          ###   ########.fr       */
+/*   Updated: 2023/06/30 15:56:08 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,10 @@ void	save_wall_colors(t_vars *vars, t_texture *texture)
 	int	h;
 	int	w;
 	int x;
-	t_color		c;
+	t_color	c;
 
 	(void) vars;
-	texture->colors = malloc(sizeof(int) * texture->img_height);
+	texture->colors = malloc(sizeof(int *) * texture->img_height);
 	if (!texture->colors)
 		print_error_exit("Malloc Error");
 	h = -1;
@@ -50,6 +50,7 @@ void	save_wall_colors(t_vars *vars, t_texture *texture)
 			}
 			texture->trgb = c.t * pow(256, 3) + c.r * pow(256, 2) + c.g * 256 + c.b;
 			texture->colors[h][x] = texture->trgb;
+			x++;
 			w += 4;
 		}
 	}
@@ -59,7 +60,7 @@ void	init_texture_info(t_vars *vars, char **texture, int texture_id)
 {
 	vars->texture[texture_id].id = ft_strdup(texture[0]);
 	if (vars->texture[texture_id].file_name)
-		print_error_exit("This texture identifier already exists");
+		print_error_exit("Texture identifier cannot be duplicated");
 	vars->texture[texture_id].file_name = ft_strdup(texture[1]);
 	vars->texture[texture_id].img.ptr = mlx_xpm_file_to_image(vars->mlx, \
 		vars->texture[texture_id].file_name, &vars->texture[texture_id].img_width, &vars->texture[texture_id].img_height);

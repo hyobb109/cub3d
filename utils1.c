@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils1.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
+/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 14:20:46 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/29 18:30:15 by yunjcho          ###   ########.fr       */
+/*   Updated: 2023/06/30 15:31:16 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ void	init_vars(t_vars *vars, char *map_name)
 	vars->map_x = -1;
 	vars->map_y = -1;
 	vars->play_pos = 0;
+	vars->angle = 30 * PI / 180;
 	vars->fd = open(map_name, O_RDONLY);
 	vars->mlx = mlx_init();
 	if (!vars->mlx)
@@ -126,7 +127,7 @@ void	check_mapfile(t_vars *vars)
 	if (cnt != 6)
 		print_error_exit("Element error");
 	measure_map_size(vars);
-	print_textures(vars->texture); //TODO: delete
+	// print_textures(vars->texture); //TODO: delete
 }
 
 char	*check_blank(const char *s, t_vars *vars)

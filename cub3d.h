@@ -28,6 +28,7 @@
 # define WE 2
 # define EA 3
 # define PI 3.141592
+# define SPEED 0.1
 
 typedef struct s_elem
 {
@@ -137,6 +138,7 @@ typedef struct s_vars
 	int			width;
 	double		posX;
 	double		posY;
+	double		angle;
 	int			play_x;
 	int			play_y;
 	char		play_pos;
@@ -202,6 +204,7 @@ t_texture	*init_texture_node(t_texture *new_node, t_vars *vars, char **texture);
 void	delete_images(t_texture **head);
 void	print_textures(t_texture *head);
 void print_strs(char **strs);
-void	paint_walls2(t_vars *vars, t_texture *texture, t_ray r, int x);
+void	paint_walls(t_vars *vars, t_texture *texture, t_ray r, int x);
+void	my_mlx_pixel_put(t_vars *vars, int x, int y, int color);
 
 #endif
