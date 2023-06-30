@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 16:20:57 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/30 15:56:08 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/30 20:39:12 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ void	init_texture_info(t_vars *vars, char **texture, int texture_id)
 	vars->texture[texture_id].file_name = ft_strdup(texture[1]);
 	vars->texture[texture_id].img.ptr = mlx_xpm_file_to_image(vars->mlx, \
 		vars->texture[texture_id].file_name, &vars->texture[texture_id].img_width, &vars->texture[texture_id].img_height);
+	if (!vars->texture[texture_id].img.ptr)
+		print_error_exit("Texture file does not exist");
 	save_wall_colors(vars, &vars->texture[texture_id]);
 }
 

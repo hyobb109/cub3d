@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/30 15:57:18 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/06/30 20:55:51 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,15 +136,18 @@ void	paint_walls(t_vars *vars, t_texture *texture, t_ray r, int x)
 	int	h;
 	int	color;
 
+	r.texStep = 1.0 * vars->texture->img_height / r.lineHeight;
+	r.texPos = (r.drawStart - vars->height / 2 + r.lineHeight / 2) * r.texStep;
+	// r.texPos = 0;
 	h = r.drawStart - 1;
 	while (++h < r.drawEnd)
 	{
-		r.texY = (int)r.texPos & (texture->img_height - 1);
+		r.texY = (int)r.texPos;
 		r.texPos += r.texStep;
-		printf("texX: %d, texY: %d, texPos: %f, texStep: %f, idx: %d\n", r.texX, r.texY, r.texPos, r.texStep, texture->img_height * r.texY + r.texX);
-		color = texture->colors[texture->img_height * r.texY + r.texX][x];
-		if (r.side == Y_SIDE)
-			color = color / 2;
+		// printf("texX: %d, texY: %d, texPos: %f, texStep: %f, idx: %d\n", r.texX, r.texY, r.texPos, r.texStep, texture->img_height * r.texY + r.texX);
+		// if (r.texY >= texture->img_height)
+		// 	r.texY = texture->img_height - 1;
+		color = texture->colors[r.texY][r.texX];
 		my_mlx_pixel_put(vars, x, h, color);
 	}
 }
@@ -164,7 +167,10 @@ int	paint_map(t_vars *vars)
 {
 	int		x;
 	t_ray	r;
+
+	mlx_clear_window(vars->mlx, vars->win);
 	paint_bg(vars);
+	// paint_wall_test(vars, &vars->texture[NO]);
 	x = -1;
 	while (++x < vars->width)
 	{
@@ -226,7 +232,8 @@ int	paint_map(t_vars *vars)
 		r.wallX -= floor(r.wallX);
 		// texture x 좌표
 		r.texX = (int)(r.wallX * (double)vars->texture->img_width);
-		if ((r.side == X_SIDE && r.raydirX > 0) || (r.side == Y_SIDE && r.raydirY < 0))
+		// 텍스쳐 좌우 반전
+		if ((r.side == X_SIDE && r.raydirX < 0) || (r.side == Y_SIDE && r.raydirY > 0))
 			r.texX = vars->texture->img_width - r.texX -1;
 		// 벽 높이
 		r.lineHeight = (int)((vars->height / 2) / r.perpWallDist);
@@ -242,34 +249,31 @@ int	paint_map(t_vars *vars)
 		// {
 		// 	r.texY = (int)r.texPos 
 		// }
-		r.texStep = 1.0 * vars->texture->img_height / r.lineHeight;
-		r.texPos = (r.drawStart - vars->height / 2 + r.lineHeight / 2) * r.texStep;
-		// if (vars->new_map[r.mapY][r.mapX] == '1')
-		// {
-		// 	if (r.mapY > (int)vars->posY)
-		// 	{
-		// 		paint_walls(vars, &vars->texture[SO], r, x);
-		// 	}
-		// 	else if (r.mapY	< (int)vars->posY)
-		// 	{
-		// 		paint_walls(vars, &vars->texture[NO], r, x);
-		// 	}
-		// 	else if (r.mapX > (int)vars->posX)
-		// 	{
-		// 		paint_walls(vars, &vars->texture[EA], r, x);
-		// 	}
-		// 	else if (r.mapX < (int)vars->posX)
-		// 	{
-		// 		paint_walls(vars, &vars->texture[WE], r, x);
-		// 	}
-		// 	// if (r.side == Y_SIDE)
-		// 	// 	draw_vertical_line(vars, x, r.drawStart, r.drawEnd, 0x33CCCC);
-		// 	// else
-		// 	// 	draw_vertical_line(vars, x, r.drawStart, r.drawEnd, 0x66FFFF);
-		// }
+		if (vars->new_map[r.mapY][r.mapX] == '1')
+		{
+			if (r.raydirY < 0 && r.side == Y_SIDE)
+			{
+				paint_walls(vars, &vars->texture[NO], r, x);
+			}
+			else if (r.raydirY > 0 && r.side == Y_SIDE)
+			{
+				paint_walls(vars, &vars->texture[SO], r, x);
+			}
+			else if (r.raydirX < 0 && r.side == X_SIDE)
+			{
+				paint_walls(vars, &vars->texture[WE], r, x);
+			}
+			else if (r.raydirX > 0 && r.side == X_SIDE)
+			{
+				paint_walls(vars, &vars->texture[EA], r, x);
+			}
+			// if (r.side == Y_SIDE)
+			// 	draw_vertical_line(vars, x, r.drawStart, r.drawEnd, 0x33CCCC);
+			// else
+			// 	draw_vertical_line(vars, x, r.drawStart, r.drawEnd, 0x66FFFF);
+		}
 	}
 	paint_minimap(vars, vars->map_x * MINIMAP_SIZE, vars->map_y * MINIMAP_SIZE);
-	paint_wall_test(vars, &vars->texture[NO]);
 	// paint_player(vars, vars->map_x * MINIMAP_SIZE, vars->map_y * MINIMAP_SIZE);
 	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.ptr, 0, 0);
 	return (0);
