@@ -6,7 +6,7 @@
 #    By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/28 17:12:07 by yunjcho           #+#    #+#              #
-#    Updated: 2023/07/02 21:55:29 by hyobicho         ###   ########.fr        #
+#    Updated: 2023/07/02 23:03:19 by hyobicho         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,10 +16,8 @@ CFLAGS = -Wall -Wextra -Werror
 LIBFT = libft/libft.a
 GNL_SRC = gnl/get_next_line.c gnl/get_next_line_utils.c
 SRCS = main.c \
-	   deque.c deque_utils.c \
-	   validation1.c validation2.c validation3.c \
-	   utils1.c utils2.c matrix.c \
-	   paint.c image1.c image2.c
+	   validation.c utils.c matrix.c \
+	   paint.c image.c init.c
 OBJS = $(SRCS:.c=.o) $(GNL_SRC:.c=.o)
 OBJS_BONUS = $(SRCS_BONUS:.c=.o) $(GNL_SRC:.c=.o)
 

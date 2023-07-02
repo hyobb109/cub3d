@@ -26,12 +26,12 @@ int	main(int ac, char **av)
 	check_mapfile(&vars);
 	validate_map(&vars);
 	init_player(&vars);
-	vars.win = mlx_new_window(vars.mlx, vars.width, vars.height, "cub3D");
-	// if (!vars.win)
-	// 	print_error_exit(0);
-	vars.img.ptr = mlx_new_image(vars.mlx, vars.width, vars.height);
-	vars.img.addr = mlx_get_data_addr(vars.img.ptr, &vars.img.bpp, &vars.img.len, &vars.img.endian);
-	// paint_map(&vars);
+	vars.win = mlx_new_window(vars.mlx, SCREEN_WIDTH, SCREEN_HEIGHT, "cub3D");
+	if (!vars.win)
+		print_error_exit(0);
+	vars.img.ptr = mlx_new_image(vars.mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
+	vars.img.addr = mlx_get_data_addr(vars.img.ptr, &vars.img.bpp, \
+	&vars.img.len, &vars.img.endian);
 	mlx_hook(vars.win, KEY_EVT, 0, key_hook, &vars);
 	mlx_hook(vars.win, EXIT_EVT, 0, ft_exit, 0);
 	mlx_loop_hook(vars.mlx, paint_map, &vars);

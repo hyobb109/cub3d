@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 15:44:59 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/02 21:25:03 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/02 22:52:41 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,8 @@ void	init_map(t_vars *vars, t_map *map)
 		{
 			if (x_idx >= tmp->width)
 				vars->new_map[y_idx][x_idx] = -1;
-			else if ((y_idx == 0 || y_idx == vars->map_y - 1 || x_idx == 0 || x_idx == tmp->width - 1) && tmp->str[x_idx] == '0')
+			else if ((y_idx == 0 || y_idx == vars->map_y - 1 \
+			|| x_idx == 0 || x_idx == tmp->width - 1) && tmp->str[x_idx] == '0')
 				print_error_exit("Map is not surrounded by wall");
 			else
 				vars->new_map[y_idx][x_idx] = tmp->str[x_idx];
@@ -62,11 +63,10 @@ void	init_map(t_vars *vars, t_map *map)
 		tmp = tmp->next;
 	}
 	vars->new_map[y_idx] = 0;
-	print_strs(vars->new_map);
 	free_lst(map);
 }
 
-char	**free_matrix(char **arr)
+void	free_matrix(char **arr)
 {
 	int	i;
 
@@ -77,5 +77,4 @@ char	**free_matrix(char **arr)
 		i++;
 	}
 	free (arr);
-	return (0);
 }

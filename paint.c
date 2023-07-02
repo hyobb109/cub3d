@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/02 21:51:56 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/02 23:02:15 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,25 +18,6 @@ void	my_mlx_pixel_put(t_vars *vars, int x, int y, int color)
 
 	dst = vars->img.addr + (y * vars->img.len + x * (vars->img.bpp / 8));
 	*(unsigned int *)dst = color;
-}
-
-void	paint_player(t_vars *vars, int width, int height)
-{
-	int	h;
-	int	w;
-
-	h = -1;
-	while (++h < height)
-	{
-		w = -1;
-		while (++w < width)
-		{
-			if ((vars->posX * MINIMAP_SIZE > w && vars->posX * MINIMAP_SIZE < w + 3) && (vars->posY * MINIMAP_SIZE > h && vars->posY * MINIMAP_SIZE < h + 3))
-			{
-				my_mlx_pixel_put(vars, w + MINIMAP_SIZE / 2, h + MINIMAP_SIZE / 2, 0xff0000);
-			}
-		}
-	}
 }
 
 void	paint_minimap(t_vars *vars, int width, int height)
@@ -68,29 +49,18 @@ void	paint_minimap(t_vars *vars, int width, int height)
 	}
 }
 
-void	draw_vertical_line(t_vars *vars, int x, int start, int end, int color)
-{
-	int	y;
-
-	y = start - 1;
-	while (++y <= end)
-	{
-		my_mlx_pixel_put(vars, x, y, color);
-	}
-}
-
 void	paint_bg(t_vars *vars)
 {
 	int	w;
 	int	h;
 
 	h = -1;
-	while (++h < vars->height)
+	while (++h < SCREEN_HEIGHT)
 	{
 		w = -1;
-		while (++w < vars->width)
+		while (++w < SCREEN_WIDTH)
 		{
-			if (h < vars->height / 2)
+			if (h < SCREEN_HEIGHT / 2)
 				my_mlx_pixel_put(vars, w, h, vars->ceiling);
 			else
 				my_mlx_pixel_put(vars, w, h, vars->floor);
@@ -136,28 +106,15 @@ void	paint_walls(t_vars *vars, t_texture *texture, t_ray r, int x)
 	int	color;
 
 	r.texStep = 1.0 * vars->texture->img_height / r.lineHeight;
-	r.texPos = (r.drawStart - vars->height / 2 + r.lineHeight / 2) * r.texStep;
-	// r.texPos = 0;
+	r.texPos = (r.drawStart - SCREEN_HEIGHT / 2 + r.lineHeight / 2) * r.texStep;
 	y = r.drawStart - 1;
-	texture->p = (int *)mlx_get_data_addr(texture->img.ptr, &texture->img.bpp, &texture->img.len, &texture->img.endian);
+	texture->colors = (int *)mlx_get_data_addr(texture->img.ptr, &texture->img.bpp, &texture->img.len, &texture->img.endian);
 	while (++y < r.drawEnd)
 	{
 		r.texY = (int)r.texPos;
 		r.texPos += r.texStep;
-		// printf("texX: %d, texY: %d, texPos: %f, texStep: %f, idx: %d\n", r.texX, r.texY, r.texPos, r.texStep, texture->img_height * r.texY + r.texX);
-		color = texture->p[texture->img_height * r.texY + r.texX];
+		color = texture->colors[texture->img_height * r.texY + r.texX];
 		my_mlx_pixel_put(vars, x, y, color);
-	}
-}
-
-void	paint_wall_test(t_vars *vars, t_texture *texture)
-{
-	for (int i = 0; i < texture->img_height; i++)
-	{
-		for (int j = 0; j < texture->img_width; j++)
-		{
-			my_mlx_pixel_put(vars, j, i, texture->colors[i][j]);
-		}
 	}
 }
 
@@ -168,8 +125,6 @@ int	paint_map(t_vars *vars)
 
 	mlx_clear_window(vars->mlx, vars->win);
 	paint_bg(vars);
-	// paint_wall_test(vars, &vars->texture[NO]);
-	// printf("rounded x: %d, rounded y: %d\n", (int)(round(vars->posX)), (int)(round(vars->posY)));
 	if (vars->new_map[(int)(vars->posY + 0.01)][(int)vars->posX] == '1')
 	{
 		vars->posY -= 0.01;
@@ -186,13 +141,12 @@ int	paint_map(t_vars *vars)
 	{
 		vars->posX += 0.01;
 	}
-	printf("posX: %f, posY: %f, map[%d][%d]: %c\n", vars->posX, vars->posY, (int)vars->posY, (int)vars->posX, vars->new_map[(int)vars->posY][(int)vars->posX]);
 	x = -1;
-	while (++x < vars->width)
+	while (++x < SCREEN_WIDTH)
 	{
 		r.mapX = (int)vars->posX;
 		r.mapY = (int)vars->posY;
-		r.camX = 2 * x / (double)(vars->width) - 1;
+		r.camX = 2 * x / (double)(SCREEN_WIDTH) - 1;
 		r.raydirX = vars->p.dirX + vars->p.planeX * r.camX;
 		r.raydirY = vars->p.dirY + vars->p.planeY * r.camX;
 		r.deltaDistX = fabs(1 / r.raydirX);
@@ -252,19 +206,13 @@ int	paint_map(t_vars *vars)
 		if ((r.side == X_SIDE && r.raydirX < 0) || (r.side == Y_SIDE && r.raydirY > 0))
 			r.texX = vars->texture->img_width - r.texX -1;
 		// 벽 높이
-		r.lineHeight = (int)((vars->height / 2) / r.perpWallDist);
-		r.drawStart = -r.lineHeight / 2 + vars->height / 2;
+		r.lineHeight = (int)((SCREEN_HEIGHT / 2) / r.perpWallDist);
+		r.drawStart = -r.lineHeight / 2 + SCREEN_HEIGHT / 2;
 		if (r.drawStart < 0)
 			r.drawStart = 0;
-		r.drawEnd = r.lineHeight / 2 + vars->height / 2;
-		if (r.drawEnd >= vars->height)
-			r.drawEnd = vars->height - 1;
-		// r.texStep = 1.0 * BLOCK_SIZE / r.lineHeight;
-		// r.texPos = (r.drawStart - vars->height / 2 + r.lineHeight / 2) * r.texStep;
-		// for (int y = r.drawStart; y < r.drawEnd; y++)
-		// {
-		// 	r.texY = (int)r.texPos 
-		// }
+		r.drawEnd = r.lineHeight / 2 + SCREEN_HEIGHT / 2;
+		if (r.drawEnd >= SCREEN_HEIGHT)
+			r.drawEnd = SCREEN_HEIGHT - 1;
 		if (vars->new_map[r.mapY][r.mapX] == '1')
 		{
 			if (r.raydirY < 0 && r.side == Y_SIDE)
@@ -283,14 +231,9 @@ int	paint_map(t_vars *vars)
 			{
 				paint_walls(vars, &vars->texture[EA], r, x);
 			}
-			// if (r.side == Y_SIDE)
-			// 	draw_vertical_line(vars, x, r.drawStart, r.drawEnd, 0x33CCCC);
-			// else
-			// 	draw_vertical_line(vars, x, r.drawStart, r.drawEnd, 0x66FFFF);
 		}
 	}
 	paint_minimap(vars, vars->map_x * MINIMAP_SIZE, vars->map_y * MINIMAP_SIZE);
-	// paint_player(vars, vars->map_x * MINIMAP_SIZE, vars->map_y * MINIMAP_SIZE);
 	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.ptr, 0, 0);
 	return (0);
 }
@@ -300,7 +243,6 @@ int	key_hook(int keycode, t_vars *vars)
 	double	oldDirX;
 	double	oldPlaneX;
 
-	// printf("keycode: %d\n", keycode);
 	if (keycode == KEY_ESC)
 	{
 		mlx_destroy_window(vars->mlx, vars->win);

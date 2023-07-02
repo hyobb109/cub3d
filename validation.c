@@ -1,36 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   validation1.c                                      :+:      :+:    :+:   */
+/*   validation.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 19:13:59 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/02 19:24:54 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/02 22:59:54 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
-
-// int	is_rectangle(t_vars *vars)
-// {
-// 	int		str_len;
-// 	int		y_idx;
-
-// 	str_len = 0;
-// 	y_idx = 0;
-// 	while (y_idx < vars->map_y && vars->new_map[y_idx])
-// 	{
-// 		str_len = ft_strlen(vars->new_map[y_idx]);
-// 		if (vars->map_x != str_len)
-// 		{
-// 			vars->err_msg = "Invalid map dimension";
-// 			return (0);
-// 		}
-// 		y_idx++;
-// 	}
-// 	return (1);
-// }
 
 void	is_surrounded(t_vars *vars, char **visited)
 {
@@ -80,10 +60,7 @@ char	**make_visit_array(t_vars *vars)
 		i = 0;
 		while (i < vars->map_x)
 		{
-			// if (vars->new_map[j][i] != -1)
-			// 	check_array[j][i] = vars->new_map[j][i];
-			// else
-				check_array[j][i] = 'F';
+			check_array[j][i] = 'F';
 			i++;
 		}
 		check_array[j][i] = '\0';
@@ -99,21 +76,4 @@ void	validate_map(t_vars *vars)
 
 	visited = make_visit_array(vars);
 	is_surrounded(vars, visited);
-	vars->width = SCREEN_WIDTH;
-	vars->height = SCREEN_HEIGHT;
-}
-
-int	is_correct_count(t_vars *vars)
-{
-	if (vars->exit_cnt != 1)
-	{
-		vars->err_msg = "We need One Exit";
-		return (0);
-	}
-	else if (vars->coll_cnt < 1)
-	{
-		vars->err_msg = "At least 1 collection is required";
-		return (0);
-	}
-	return (1);
 }
