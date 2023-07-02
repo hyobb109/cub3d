@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/30 20:57:34 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/02 16:40:03 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,6 @@ void	init_player(t_vars *vars)
 	}
 }
 
-
 void	paint_walls(t_vars *vars, t_texture *texture, t_ray r, int x)
 {
 	int	h;
@@ -140,14 +139,13 @@ void	paint_walls(t_vars *vars, t_texture *texture, t_ray r, int x)
 	r.texPos = (r.drawStart - vars->height / 2 + r.lineHeight / 2) * r.texStep;
 	// r.texPos = 0;
 	h = r.drawStart - 1;
+	texture->p = (int *)mlx_get_data_addr(texture->img.ptr, &texture->img.bpp, &texture->img.len, &texture->img.endian);
 	while (++h < r.drawEnd)
 	{
 		r.texY = (int)r.texPos;
 		r.texPos += r.texStep;
 		// printf("texX: %d, texY: %d, texPos: %f, texStep: %f, idx: %d\n", r.texX, r.texY, r.texPos, r.texStep, texture->img_height * r.texY + r.texX);
-		if (r.texY >= texture->img_height)
-			r.texY = texture->img_height - 1;
-		color = texture->colors[r.texY][r.texX];
+		color = texture->p[texture->img_height * r.texY + r.texX];
 		my_mlx_pixel_put(vars, x, h, color);
 	}
 }

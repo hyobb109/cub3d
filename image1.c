@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 16:20:57 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/30 20:39:12 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/02 16:31:16 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void	init_texture_info(t_vars *vars, char **texture, int texture_id)
 		vars->texture[texture_id].file_name, &vars->texture[texture_id].img_width, &vars->texture[texture_id].img_height);
 	if (!vars->texture[texture_id].img.ptr)
 		print_error_exit("Texture file does not exist");
-	save_wall_colors(vars, &vars->texture[texture_id]);
+	// save_wall_colors(vars, &vars->texture[texture_id]);
 }
 
 void	save_element(t_vars *vars, char **texture)
