@@ -45,7 +45,7 @@ int mlx_string_put(void *mlx_ptr, void *win_ptr, int x, int y, int color, char *
   if (font == (void *)0)
     {
       font = mlx_new_image(mlx_ptr, font_atlas.width, font_atlas.height);
-      data = (unsigned char *)mlx_get_texture_addr(font, &bpp, &size_line, &endian);
+      data = (unsigned char *)mlx_get_data_addr(font, &bpp, &size_line, &endian);
       mlx_int_fill(data, size_line);
     }
 

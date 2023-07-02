@@ -36,5 +36,5 @@ int	main(int ac, char **av)
 	mlx_hook(vars.win, EXIT_EVT, 0, ft_exit, 0);
 	mlx_loop_hook(vars.mlx, paint_map, &vars);
 	mlx_loop(vars.mlx);
-	return (0);
+	exit(0);
 }

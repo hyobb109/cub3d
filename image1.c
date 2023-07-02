@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 16:20:57 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/02 16:31:16 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/02 20:22:15 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,17 @@ void	save_wall_colors(t_vars *vars, t_texture *texture)
 	t_color	c;
 
 	(void) vars;
-	texture->colors = malloc(sizeof(int *) * texture->img_height);
+	texture->colors = malloc(sizeof(int *) * BLOCK_SIZE);
 	if (!texture->colors)
 		print_error_exit("Malloc Error");
 	h = -1;
 	texture->img.addr = mlx_get_data_addr(texture->img.ptr, &texture->img.bpp, &texture->img.len, &texture->img.endian);
-	while (++h < texture->img_height)
+	while (++h < BLOCK_SIZE)
 	{
 		x = 0;
 		w = 0;
-		texture->colors[h] = malloc(sizeof(int) * texture->img_width);
-		while (w < texture->img_width * 4)
+		texture->colors[h] = malloc(sizeof(int) * BLOCK_SIZE);
+		while (w < BLOCK_SIZE * 4)
 		{
 			if (!texture->colors[h])
 				print_error_exit("Malloc Error");

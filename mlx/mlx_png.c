@@ -120,7 +120,7 @@ int	mipng_fill_img(void *img, unsigned char *buf, png_info_t *pi)
   unsigned char tmp;
   unsigned char *ibuf;
 
-  ibuf = (unsigned char *)mlx_get_texture_addr(img, &bpp, &iline, &endian);
+  ibuf = (unsigned char *)mlx_get_data_addr(img, &bpp, &iline, &endian);
   //  iline = img->width * UNIQ_BPP;
   // ilen = img->width * img->height * UNIQ_BPP;
   ilen = iline*pi->height;

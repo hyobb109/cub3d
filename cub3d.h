@@ -28,7 +28,10 @@
 # define WE 2
 # define EA 3
 # define PI 3.141592
-# define SPEED 0.1
+# define SPEED 0.2
+# define SCREEN_WIDTH 1024
+# define SCREEN_HEIGHT 768
+
 
 typedef struct s_elem
 {

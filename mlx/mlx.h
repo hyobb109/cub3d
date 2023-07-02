@@ -73,7 +73,7 @@ void	*mlx_new_image(void *mlx_ptr,int width,int height);
 /*
 **  return void *0 if failed
 */
-char	*mlx_get_texture_addr(void *img_ptr, int *bits_per_pixel,
+char	*mlx_get_data_addr(void *img_ptr, int *bits_per_pixel,
 			   int *size_line, int *endian);
 /*
 **  endian : 0 = graphical sever is little endian, 1 = big endian

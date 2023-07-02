@@ -298,7 +298,7 @@ void	*mlx_int_parse_xpm(void *xvar,void *info,int info_size,char *(*f)(), int *w
 
   if (!(img = mlx_new_image(xvar,*width,*height)))
     RETURN;
-  data = mlx_get_texture_addr(img, &opp, &sl, &endian);
+  data = mlx_get_data_addr(img, &opp, &sl, &endian);
   opp = 4;
 
   i = *height;

@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/02 16:40:03 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/02 21:51:56 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ void	init_player(t_vars *vars)
 	{
 		vars->p.dirX = 0;
 		vars->p.dirY = 1;
-		vars->p.planeX = 0.66;
+		vars->p.planeX = -0.66;
 		vars->p.planeY = 0;
 	}
 	else if (vars->play_pos == 'E')
@@ -132,21 +132,21 @@ void	init_player(t_vars *vars)
 
 void	paint_walls(t_vars *vars, t_texture *texture, t_ray r, int x)
 {
-	int	h;
+	int	y;
 	int	color;
 
 	r.texStep = 1.0 * vars->texture->img_height / r.lineHeight;
 	r.texPos = (r.drawStart - vars->height / 2 + r.lineHeight / 2) * r.texStep;
 	// r.texPos = 0;
-	h = r.drawStart - 1;
+	y = r.drawStart - 1;
 	texture->p = (int *)mlx_get_data_addr(texture->img.ptr, &texture->img.bpp, &texture->img.len, &texture->img.endian);
-	while (++h < r.drawEnd)
+	while (++y < r.drawEnd)
 	{
 		r.texY = (int)r.texPos;
 		r.texPos += r.texStep;
 		// printf("texX: %d, texY: %d, texPos: %f, texStep: %f, idx: %d\n", r.texX, r.texY, r.texPos, r.texStep, texture->img_height * r.texY + r.texX);
 		color = texture->p[texture->img_height * r.texY + r.texX];
-		my_mlx_pixel_put(vars, x, h, color);
+		my_mlx_pixel_put(vars, x, y, color);
 	}
 }
 
@@ -169,6 +169,24 @@ int	paint_map(t_vars *vars)
 	mlx_clear_window(vars->mlx, vars->win);
 	paint_bg(vars);
 	// paint_wall_test(vars, &vars->texture[NO]);
+	// printf("rounded x: %d, rounded y: %d\n", (int)(round(vars->posX)), (int)(round(vars->posY)));
+	if (vars->new_map[(int)(vars->posY + 0.01)][(int)vars->posX] == '1')
+	{
+		vars->posY -= 0.01;
+	}
+	else if (vars->new_map[(int)(vars->posY - 0.01)][(int)vars->posX] == '1')
+	{
+		vars->posY += 0.01;
+	}
+	else if (vars->new_map[(int)vars->posY][(int)(vars->posX + 0.01)] == '1')
+	{
+		vars->posX -= 0.01;
+	}
+	else if (vars->new_map[(int)vars->posY][(int)(vars->posX - 0.01)] == '1')
+	{
+		vars->posX += 0.01;
+	}
+	printf("posX: %f, posY: %f, map[%d][%d]: %c\n", vars->posX, vars->posY, (int)vars->posY, (int)vars->posX, vars->new_map[(int)vars->posY][(int)vars->posX]);
 	x = -1;
 	while (++x < vars->width)
 	{
@@ -282,6 +300,7 @@ int	key_hook(int keycode, t_vars *vars)
 	double	oldDirX;
 	double	oldPlaneX;
 
+	// printf("keycode: %d\n", keycode);
 	if (keycode == KEY_ESC)
 	{
 		mlx_destroy_window(vars->mlx, vars->win);
@@ -313,7 +332,7 @@ int	key_hook(int keycode, t_vars *vars)
 		if (vars->new_map[(int)(vars->posY)][(int)(vars->posX - vars->p.planeX * SPEED)] != '1')
 			vars->posX -= vars->p.planeX * SPEED;
 		if (vars->new_map[(int)(vars->posY - vars->p.planeY * SPEED)][(int)(vars->posX)] != '1')
-			vars->posY -= vars->p.planeY * SPEED;
+				vars->posY -= vars->p.planeY * SPEED;
 	}
 	else if (keycode == KEY_LEFT)
 	{
