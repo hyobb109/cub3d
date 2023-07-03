@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 14:20:46 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/02 22:54:41 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/03 13:50:30 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ char	*check_blank(const char *s, t_vars *vars)
 			no_blank++;
 		}
 	}
+	free(str);
 	dst[i] = '\0';
 	if (!no_blank)
 		print_error_exit("Map is empty");

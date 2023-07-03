@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/03 13:44:29 by hyobicho          #+#    #+#             */
+/*   Updated: 2023/07/03 13:49:11 by hyobicho         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cub3d.h"
 
 static void	check_args(int ac, char **av)
@@ -20,7 +32,7 @@ int	main(int ac, char **av)
 {
 	t_vars	vars;
 
-	// atexit(leaks);
+	atexit(leaks);
 	check_args(ac, av);
 	init_vars(&vars, av[1]);
 	check_mapfile(&vars);

@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 19:13:59 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/02 22:59:54 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/03 13:47:01 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,4 +76,5 @@ void	validate_map(t_vars *vars)
 
 	visited = make_visit_array(vars);
 	is_surrounded(vars, visited);
+	free_matrix(visited);
 }
