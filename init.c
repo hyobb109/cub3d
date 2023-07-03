@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 15:53:36 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/03 16:30:36 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/03 20:21:34 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ static void	init_texture(t_vars *vars)
 	i = -1;
 	while (++i < 4)
 	{
-		vars->texture[i].id = 0;
 		vars->texture[i].file_name = 0;
 		vars->texture[i].img_height = 0;
 		vars->texture[i].img_width = 0;

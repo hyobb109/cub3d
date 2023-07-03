@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   image.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 16:20:57 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/03 14:48:08 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/03 20:22:02 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 static void	init_texture_info(t_vars *vars, char **texture, int texture_id)
 {
-	vars->texture[texture_id].id = ft_strdup(texture[0]);
 	if (vars->texture[texture_id].file_name)
 		print_error_exit("Texture identifier cannot be duplicated");
 	vars->texture[texture_id].file_name = ft_strdup(texture[1]);

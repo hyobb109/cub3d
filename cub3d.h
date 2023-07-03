@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 16:43:38 by hyobicho          #+#    #+#             */
-/*   Updated: 2023/07/03 17:47:09 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/03 20:22:41 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,11 @@ typedef struct s_img
 
 typedef struct s_texture
 {
-	char				*id;
-	t_img				img;
-	char				*file_name;
-	int					*colors;
-	int					img_width;
-	int					img_height;
+	t_img	img;
+	char	*file_name;
+	int		*colors;
+	int		img_width;
+	int		img_height;
 }	t_texture;
 
 typedef struct s_map
