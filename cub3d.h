@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cub3d.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/03 16:43:38 by hyobicho          #+#    #+#             */
+/*   Updated: 2023/07/03 17:05:42 by hyobicho         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef CUB3D_H
 # define CUB3D_H
 
@@ -135,16 +147,13 @@ char	*copy_str(const char *s, t_vars *vars);
 // matrix.c
 void	init_map(t_vars *vars, t_map *map);
 void	free_matrix(char **arr);
-void	free_lst(t_map *map); // todo
+void	free_lst(t_map *map);
 
 // image.c
 void	save_element(t_vars *vars, char **texture);
 void	save_color(t_vars *vars, char **tmp);
 
 // validation.c
-void	is_surrounded(t_vars *vars, char **visitied);
-char	**make_visit_array(t_vars *vars);
-void	validate_map(t_vars *vars);
 void	check_mapfile(t_vars *vars);
 
 // paint.c

@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 13:44:29 by hyobicho          #+#    #+#             */
-/*   Updated: 2023/07/03 16:30:50 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/03 16:57:24 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ int	main(int ac, char **av)
 	check_args(ac, av);
 	init_vars(&vars, av[1]);
 	check_mapfile(&vars);
-	validate_map(&vars);
 	init_player(&vars);
 	vars.win = mlx_new_window(vars.mlx, SCREEN_WIDTH, SCREEN_HEIGHT, "cub3D");
 	if (!vars.win)
