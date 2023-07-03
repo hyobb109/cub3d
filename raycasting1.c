@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycasting1.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/03 17:32:32 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/03 20:30:16 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@ static void	init_dirplane(t_vars *vars, int idx)
 	const double	plane_x[4] = {0.66, -0.66, 0.0, 0.0};
 	const double	plane_y[4] = {0.0, 0.0, -0.66, 0.66};
 
-	vars->p.dirX = dir_x[idx];
-	vars->p.dirY = dir_y[idx];
-	vars->p.planeX = plane_x[idx];
-	vars->p.planeY = plane_y[idx];
+	vars->p.dir_x = dir_x[idx];
+	vars->p.dir_y = dir_y[idx];
+	vars->p.plane_x = plane_x[idx];
+	vars->p.plane_y = plane_y[idx];
 }
 
 void	init_player(t_vars *vars)
@@ -39,36 +39,36 @@ void	init_player(t_vars *vars)
 
 void	init_raycasting_vars1(t_vars *vars, t_ray *r, int x)
 {
-	r->mapX = (int)vars->posX;
-	r->mapY = (int)vars->posY;
-	r->camX = 2 * x / (double)(SCREEN_WIDTH) - 1;
-	r->raydirX = vars->p.dirX + vars->p.planeX * r->camX;
-	r->raydirY = vars->p.dirY + vars->p.planeY * r->camX;
-	r->deltaDistX = fabs(1 / r->raydirX);
-	r->deltaDistY = fabs(1 / r->raydirY);
+	r->cur_x = (int)vars->pos_x;
+	r->cur_y = (int)vars->pos_y;
+	r->cam_x = 2 * x / (double)(SCREEN_WIDTH) - 1;
+	r->raydir_x = vars->p.dir_x + vars->p.plane_x * r->cam_x;
+	r->raydir_y = vars->p.dir_y + vars->p.plane_y * r->cam_x;
+	r->delta_dist_x = fabs(1 / r->raydir_x);
+	r->delta_dist_y = fabs(1 / r->raydir_y);
 }
 
 void	init_raycasting_vars2(t_vars *vars, t_ray *r)
 {
-	if (r->raydirX > 0)
+	if (r->raydir_x > 0)
 	{
-		r->stepX = 1;
-		r->sideDistX = (r->mapX + 1 - vars->posX) * r->deltaDistX;
+		r->step_x = 1;
+		r->side_dist_x = (r->cur_x + 1 - vars->pos_x) * r->delta_dist_x;
 	}	
 	else
 	{
-		r->stepX = -1;
-		r->sideDistX = (vars->posX - r->mapX) * r->deltaDistX;
+		r->step_x = -1;
+		r->side_dist_x = (vars->pos_x - r->cur_x) * r->delta_dist_x;
 	}
-	if (r->raydirY > 0)
+	if (r->raydir_y > 0)
 	{
-		r->stepY = 1;
-		r->sideDistY = (r->mapY + 1 - vars->posY) * r->deltaDistY;
+		r->step_y = 1;
+		r->side_dist_y = (r->cur_y + 1 - vars->pos_y) * r->delta_dist_y;
 	}
 	else
 	{
-		r->stepY = -1;
-		r->sideDistY = (vars->posY - r->mapY) * r->deltaDistY;
+		r->step_y = -1;
+		r->side_dist_y = (vars->pos_y - r->cur_y) * r->delta_dist_y;
 	}
 }
 
@@ -77,19 +77,19 @@ void	raycasting(t_vars *vars, t_ray *r)
 	r->hit = 0;
 	while (!r->hit)
 	{
-		if (r->sideDistX < r->sideDistY)
+		if (r->side_dist_x < r->side_dist_y)
 		{
-			r->sideDistX += r->deltaDistX;
-			r->mapX += r->stepX;
+			r->side_dist_x += r->delta_dist_x;
+			r->cur_x += r->step_x;
 			r->side = X_SIDE;
 		}
 		else
 		{
-			r->sideDistY += r->deltaDistY;
-			r->mapY += r->stepY;
+			r->side_dist_y += r->delta_dist_y;
+			r->cur_y += r->step_y;
 			r->side = Y_SIDE;
 		}
-		if (vars->new_map[r->mapY][r->mapX] == '1')
+		if (vars->new_map[r->cur_y][r->cur_x] == '1')
 			r->hit = 1;
 	}
 }

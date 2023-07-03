@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   matrix.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 15:44:59 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/03 16:28:33 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/03 20:30:16 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,8 @@ static void	init_map_line(t_vars *vars, t_map *tmp, int y_idx)
 			vars->new_map[y_idx][x_idx] = tmp->str[x_idx];
 		if (x_idx < tmp->width && tmp->str[x_idx] == vars->play_pos)
 		{
-			vars->posX = x_idx + 0.5;
-			vars->posY = y_idx + 0.5;
+			vars->pos_x = x_idx + 0.5;
+			vars->pos_y = y_idx + 0.5;
 		}
 	}
 	vars->new_map[y_idx][x_idx] = '\0';

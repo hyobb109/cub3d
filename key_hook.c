@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   key_hook.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 17:36:08 by hyobicho          #+#    #+#             */
-/*   Updated: 2023/07/03 17:41:13 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/03 20:30:16 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 
 static void	adjust_pos_range(t_vars *vars)
 {
-	if (vars->new_map[(int)(vars->posY + 0.01)][(int)vars->posX] == '1')
-		vars->posY -= 0.01;
-	else if (vars->new_map[(int)(vars->posY - 0.01)][(int)vars->posX] == '1')
-		vars->posY += 0.01;
-	else if (vars->new_map[(int)vars->posY][(int)(vars->posX + 0.01)] == '1')
-		vars->posX -= 0.01;
-	else if (vars->new_map[(int)vars->posY][(int)(vars->posX - 0.01)] == '1')
-		vars->posX += 0.01;
+	if (vars->new_map[(int)(vars->pos_y + 0.01)][(int)vars->pos_x] == '1')
+		vars->pos_y -= 0.01;
+	else if (vars->new_map[(int)(vars->pos_y - 0.01)][(int)vars->pos_x] == '1')
+		vars->pos_y += 0.01;
+	else if (vars->new_map[(int)vars->pos_y][(int)(vars->pos_x + 0.01)] == '1')
+		vars->pos_x -= 0.01;
+	else if (vars->new_map[(int)vars->pos_y][(int)(vars->pos_x - 0.01)] == '1')
+		vars->pos_x += 0.01;
 }
 
 int	key_hook(int keycode, t_vars *vars)

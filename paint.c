@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   paint.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/03 17:43:18 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/03 20:29:46 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,17 +44,17 @@ void	paint_walls(t_vars *vars, t_texture *texture, t_ray *r, int x)
 	int	y;
 	int	color;
 
-	r->texStep = 1.0 * vars->texture->img_height / r->lineHeight;
-	r->texPos = (r->drawStart - SCREEN_HEIGHT / 2 \
-		+ r->lineHeight / 2) * r->texStep;
-	y = r->drawStart - 1;
+	r->tex_step = 1.0 * vars->texture->img_height / r->line_height;
+	r->tex_pos = (r->draw_start - SCREEN_HEIGHT / 2 \
+		+ r->line_height / 2) * r->tex_step;
+	y = r->draw_start - 1;
 	texture->colors = (int *)mlx_get_data_addr(texture->img.ptr, \
 		&texture->img.bpp, &texture->img.len, &texture->img.endian);
-	while (++y < r->drawEnd)
+	while (++y < r->draw_end)
 	{
-		r->texY = (int)r->texPos;
-		r->texPos += r->texStep;
-		color = texture->colors[texture->img_height * r->texY + r->texX];
+		r->tex_y = (int)r->tex_pos;
+		r->tex_pos += r->tex_step;
+		color = texture->colors[texture->img_height * r->tex_y + r->tex_x];
 		my_mlx_pixel_put(vars, x, y, color);
 	}
 }

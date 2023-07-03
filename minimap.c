@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minimap.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 17:37:16 by hyobicho          #+#    #+#             */
-/*   Updated: 2023/07/03 17:38:08 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/03 20:30:16 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@ static int	is_redrange(t_vars *vars, int w, int h)
 
 	width = vars->map_x * MINIMAP_SIZE;
 	height = vars->map_y * MINIMAP_SIZE;
-	if (((vars->posX * MINIMAP_SIZE > w \
-		&& vars->posX * MINIMAP_SIZE < w + 3) \
-		&& (vars->posY * MINIMAP_SIZE > h \
-		&& vars->posY * MINIMAP_SIZE < h + 3)) \
+	if (((vars->pos_x * MINIMAP_SIZE > w \
+		&& vars->pos_x * MINIMAP_SIZE < w + 3) \
+		&& (vars->pos_y * MINIMAP_SIZE > h \
+		&& vars->pos_y * MINIMAP_SIZE < h + 3)) \
 		|| h == 0 || h == height - 1 || w == 0 || w == width - 1)
 		return (1);
 	return (0);

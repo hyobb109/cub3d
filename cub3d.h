@@ -6,7 +6,7 @@
 /*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 16:43:38 by hyobicho          #+#    #+#             */
-/*   Updated: 2023/07/03 20:22:41 by yunjcho          ###   ########.fr       */
+/*   Updated: 2023/07/03 20:30:16 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,44 +71,37 @@ typedef struct s_map
 
 typedef struct s_player
 {
-	double	dirX;
-	double	dirY;
-	double	planeX;
-	double	planeY;
+	double	dir_x;
+	double	dir_y;
+	double	plane_x;
+	double	plane_y;
 }	t_player;
 
 typedef struct s_ray
 {
-	int		mapX;
-	int		mapY;
-	double	camX;
-	double	raydirX;
-	double	raydirY;
-	// 처음 벽 충돌까지 거리
-	double	sideDistX;
-	double	sideDistY;
-	// 벽 충돌까지 거리 변화량
-	double	deltaDistX;
-	double	deltaDistY;
-	// 플레이어 위치에서 카메라평면과 벽과의 수직거리 계산
-	double	perpWallDist;
-	// 이동방향
-	int		stepX;
-	int		stepY;
-	// 벽 충돌 여부
+	int		cur_x;
+	int		cur_y;
+	double	cam_x;
+	double	raydir_x;
+	double	raydir_y;
+	double	side_dist_x;
+	double	side_dist_y;
+	double	delta_dist_x;
+	double	delta_dist_y;
+	double	perp_wall_dist;
+	int		step_x;
+	int		step_y;
 	int		hit;
-	// 충돌한 면
 	int		side;
-	int		lineHeight;
-	int		drawStart;
-	int		drawEnd;
-	// 벽 텍스쳐
+	int		line_height;
+	int		draw_start;
+	int		draw_end;
 	int		wall_id;
-	double	wallX;
-	int		texX;
-	int		texY;
-	double	texPos;
-	double	texStep;
+	double	wall_x;
+	int		tex_x;
+	int		tex_y;
+	double	tex_pos;
+	double	tex_step;
 }	t_ray;
 
 typedef struct s_vars
@@ -121,8 +114,8 @@ typedef struct s_vars
 	int			fd;
 	int			map_x;
 	int			map_y;
-	double		posX;
-	double		posY;
+	double		pos_x;
+	double		pos_y;
 	double		angle;
 	char		play_pos;
 	int			floor;
