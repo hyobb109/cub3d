@@ -6,7 +6,7 @@
 /*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 15:44:59 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/03 20:30:16 by yunjcho          ###   ########.fr       */
+/*   Updated: 2023/07/03 21:27:32 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,8 @@ static void	init_map_line(t_vars *vars, t_map *tmp, int y_idx)
 		if (x_idx >= tmp->width)
 			vars->new_map[y_idx][x_idx] = -1;
 		else if ((y_idx == 0 || y_idx == vars->map_y - 1 \
-		|| x_idx == 0 || x_idx == tmp->width - 1) && tmp->str[x_idx] == '0')
+		|| x_idx == 0 || x_idx == tmp->width - 1) \
+		&& (tmp->str[x_idx] != '1' && tmp->str[x_idx] != -1))
 			print_error_exit("Map is not surrounded by wall");
 		else
 			vars->new_map[y_idx][x_idx] = tmp->str[x_idx];
