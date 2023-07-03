@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 14:20:46 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/03 16:24:04 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/03 16:29:38 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int	ft_exit(void)
 	exit(0);
 }
 
-static int	count_data(t_vars *vars, char *str, int cnt)
+int	count_data(t_vars *vars, char *str, int cnt)
 {
 	char	*trimmed;
 	char	**tmp;
@@ -44,7 +44,6 @@ static int	count_data(t_vars *vars, char *str, int cnt)
 	return (cnt);
 }
 
-// 파일 분리하기
 static void	check_blank(char *dst, char *str, int *no_blank, t_vars *vars)
 {
 	int		i;
@@ -74,7 +73,7 @@ static void	check_blank(char *dst, char *str, int *no_blank, t_vars *vars)
 	*dst = '\0';
 }
 
-static char	*copy_str(const char *s, t_vars *vars)
+char	*copy_str(const char *s, t_vars *vars)
 {
 	char	*dst;
 	int		no_blank;
@@ -92,20 +91,6 @@ static char	*copy_str(const char *s, t_vars *vars)
 	if (!no_blank)
 		print_error_exit("Map is empty");
 	return (dst);
-}
-
-static t_map	*init_map_node(char *str, int h, t_vars *vars)
-{
-	t_map	*new;
-
-	new = malloc(sizeof(t_map));
-	if (!new)
-		print_error_exit("malloc error");
-	new->height = h + 1;
-	new->str = copy_str(str, vars);
-	new->width = ft_strlen(new->str);
-	new->next = 0;
-	return (new);
 }
 
 void	measure_map_size(t_vars *vars, t_map *map, char	*str)
@@ -133,48 +118,4 @@ void	measure_map_size(t_vars *vars, t_map *map, char	*str)
 		print_error_exit("No map");
 	if (!vars->play_pos)
 		print_error_exit("No player");
-}
-
-char	*init_map_head(t_vars *vars, t_map **map)
-{
-	char	*str;
-	char	*trimmed;
-
-	str = get_next_line(vars->fd);
-	trimmed = ft_strtrim(str, " \v\r\f\n\t");
-	while (str && !trimmed[0])
-	{
-		free(str);
-		free(trimmed);
-		str = get_next_line(vars->fd);
-		trimmed = ft_strtrim(str, " \v\r\f\n\t");
-	}
-	free(trimmed);
-	*map = init_map_node(str, 0, vars);
-	return (str);
-}
-
-void	check_mapfile(t_vars *vars)
-{
-	int		cnt;
-	char	*str;
-	t_map	*map;
-
-	cnt = 0;
-	map = 0;
-	str = get_next_line(vars->fd);
-	if (!str)
-		print_error_exit("No return value from GNL");
-	while (str)
-	{
-		cnt = count_data(vars, str, cnt);
-		if (cnt == 6)
-			break ;
-		str = get_next_line(vars->fd);
-	}
-	if (cnt != 6)
-		print_error_exit("Element error");
-	str = init_map_head(vars, &map);
-	measure_map_size(vars, map, str);
-	init_map(vars, map);
 }

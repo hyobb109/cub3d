@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 19:13:59 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/03 13:47:01 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/03 16:28:17 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,4 +77,29 @@ void	validate_map(t_vars *vars)
 	visited = make_visit_array(vars);
 	is_surrounded(vars, visited);
 	free_matrix(visited);
+}
+
+void	check_mapfile(t_vars *vars)
+{
+	int		cnt;
+	char	*str;
+	t_map	*map;
+
+	cnt = 0;
+	map = 0;
+	str = get_next_line(vars->fd);
+	if (!str)
+		print_error_exit("No return value from GNL");
+	while (str)
+	{
+		cnt = count_data(vars, str, cnt);
+		if (cnt == 6)
+			break ;
+		str = get_next_line(vars->fd);
+	}
+	if (cnt != 6)
+		print_error_exit("Element error");
+	str = init_map_head(vars, &map);
+	measure_map_size(vars, map, str);
+	init_map(vars, map);
 }

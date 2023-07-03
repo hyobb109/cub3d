@@ -123,11 +123,14 @@ typedef struct s_vars
 
 // init.c
 void	init_vars(t_vars *vars, char *map_name);
+t_map	*init_map_node(char *str, int h, t_vars *vars);
+char	*init_map_head(t_vars *vars, t_map **map);
 
 // utils.c
-void	check_mapfile(t_vars *vars);
 void	measure_map_size(t_vars *vars, t_map *map, char	*str);
 int		ft_exit(void);
+int		count_data(t_vars *vars, char *str, int cnt);
+char	*copy_str(const char *s, t_vars *vars);
 
 // matrix.c
 void	init_map(t_vars *vars, t_map *map);
@@ -142,6 +145,7 @@ void	save_color(t_vars *vars, char **tmp);
 void	is_surrounded(t_vars *vars, char **visitied);
 char	**make_visit_array(t_vars *vars);
 void	validate_map(t_vars *vars);
+void	check_mapfile(t_vars *vars);
 
 // paint.c
 void	paint_bg(t_vars *vars);
