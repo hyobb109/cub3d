@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   paint.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
+/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/03 17:13:42 by yunjcho          ###   ########.fr       */
+/*   Updated: 2023/07/03 17:43:18 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,59 +18,6 @@ void	my_mlx_pixel_put(t_vars *vars, int x, int y, int color)
 
 	dst = vars->img.addr + (y * vars->img.len + x * (vars->img.bpp / 8));
 	*(unsigned int *)dst = color;
-}
-
-static int	is_redrange(t_vars *vars, int w, int h)
-{
-	int	width;
-	int	height;
-
-	width = vars->map_x * MINIMAP_SIZE;
-	height = vars->map_y * MINIMAP_SIZE;
-	if (((vars->posX * MINIMAP_SIZE > w \
-		&& vars->posX * MINIMAP_SIZE < w + 3) \
-		&& (vars->posY * MINIMAP_SIZE > h \
-		&& vars->posY * MINIMAP_SIZE < h + 3)) \
-		|| h == 0 || h == height - 1 || w == 0 || w == width - 1)
-		return (1);
-	return (0);
-}
-
-static void	painting_minimap(t_vars *vars, int w, int h)
-{
-	int	cx;
-	int	cy;
-
-	cx = w / MINIMAP_SIZE;
-	cy = h / MINIMAP_SIZE;
-	if (is_redrange(vars, w, h))
-		my_mlx_pixel_put(vars, w + MINIMAP_SIZE / 2, \
-		h + MINIMAP_SIZE / 2, 0xff0000);
-	else if (vars->new_map[cy][cx] == '1')
-		my_mlx_pixel_put(vars, w + MINIMAP_SIZE / 2, \
-			h + MINIMAP_SIZE / 2, 0xa0a0a0);
-	else if (vars->new_map[cy][cx] == -1)
-		my_mlx_pixel_put(vars, w + MINIMAP_SIZE / 2, \
-			h + MINIMAP_SIZE / 2, vars->ceiling);
-	else
-		my_mlx_pixel_put(vars, w + MINIMAP_SIZE / 2, \
-			h + MINIMAP_SIZE / 2, vars->floor);
-}
-
-void	paint_minimap(t_vars *vars, int width, int height)
-{
-	int	h;
-	int	w;
-
-	h = -1;
-	while (++h < height)
-	{
-		w = -1;
-		while (++w < width)
-		{
-			painting_minimap(vars, w, h);
-		}
-	}
 }
 
 void	paint_bg(t_vars *vars)
@@ -110,113 +57,4 @@ void	paint_walls(t_vars *vars, t_texture *texture, t_ray *r, int x)
 		color = texture->colors[texture->img_height * r->texY + r->texX];
 		my_mlx_pixel_put(vars, x, y, color);
 	}
-}
-
-void	adjust_pos_range(t_vars *vars)
-{
-	if (vars->new_map[(int)(vars->posY + 0.01)][(int)vars->posX] == '1')
-		vars->posY -= 0.01;
-	else if (vars->new_map[(int)(vars->posY - 0.01)][(int)vars->posX] == '1')
-		vars->posY += 0.01;
-	else if (vars->new_map[(int)vars->posY][(int)(vars->posX + 0.01)] == '1')
-		vars->posX -= 0.01;
-	else if (vars->new_map[(int)vars->posY][(int)(vars->posX - 0.01)] == '1')
-		vars->posX += 0.01;
-}
-
-static void	move_up(t_vars *vars)
-{
-	if (vars->new_map[(int)(vars->posY)] \
-		[(int)(vars->posX + vars->p.dirX * SPEED)] != '1')
-		vars->posX += vars->p.dirX * SPEED;
-	if (vars->new_map[(int)(vars->posY \
-		+ vars->p.dirY * SPEED)][(int)(vars->posX)] != '1')
-		vars->posY += vars->p.dirY * SPEED;
-}
-
-static void	move_down(t_vars *vars)
-{
-	if (vars->new_map[(int)(vars->posY)] \
-		[(int)(vars->posX - vars->p.dirX * SPEED)] != '1')
-		vars->posX -= vars->p.dirX * SPEED;
-	if (vars->new_map[(int)(vars->posY \
-		- vars->p.dirY * SPEED)][(int)(vars->posX)] != '1')
-		vars->posY -= vars->p.dirY * SPEED;
-}
-
-static void	move_left(t_vars *vars)
-{
-	if (vars->new_map[(int)(vars->posY)]
-		[(int)(vars->posX + vars->p.planeX * SPEED)] != '1')
-		vars->posX += vars->p.planeX * SPEED;
-	if (vars->new_map[(int)(vars->posY \
-		+ vars->p.planeY * SPEED)][(int)(vars->posX)] != '1')
-		vars->posY += vars->p.planeY * SPEED;
-}
-
-static void	move_right(t_vars *vars)
-{
-	if (vars->new_map[(int)(vars->posY)] \
-		[(int)(vars->posX - vars->p.planeX * SPEED)] != '1')
-		vars->posX -= vars->p.planeX * SPEED;
-	if (vars->new_map[(int)(vars->posY \
-		- vars->p.planeY * SPEED)][(int)(vars->posX)] != '1')
-			vars->posY -= vars->p.planeY * SPEED;
-}
-
-static void	rotate_left(t_vars *vars)
-{
-	double	olddir_x;
-	double	oldplane_x;
-
-	olddir_x = vars->p.dirX;
-	vars->p.dirX = vars->p.dirX \
-		* cos(vars->angle) + vars->p.dirY * sin(vars->angle);
-	vars->p.dirY = -olddir_x \
-		* sin(vars->angle) + vars->p.dirY * cos(vars->angle);
-	oldplane_x = vars->p.planeX;
-	vars->p.planeX = vars->p.planeX \
-		* cos(vars->angle) + vars->p.planeY * sin(vars->angle);
-	vars->p.planeY = -oldplane_x \
-		* sin(vars->angle) + vars->p.planeY * cos(vars->angle);
-}
-
-static void rotate_right(t_vars *vars)
-{
-	double	olddir_x;
-	double	oldplane_x;
-
-	olddir_x = vars->p.dirX;
-	vars->p.dirX = vars->p.dirX \
-		* cos(vars->angle) - vars->p.dirY * sin(vars->angle);
-	vars->p.dirY = olddir_x \
-		* sin(vars->angle) + vars->p.dirY * cos(vars->angle);
-	oldplane_x = vars->p.planeX;
-	vars->p.planeX = vars->p.planeX
-		* cos(vars->angle) - vars->p.planeY * sin(vars->angle);
-	vars->p.planeY = oldplane_x
-		* sin(vars->angle) + vars->p.planeY * cos(vars->angle);
-}
-
-int	key_hook(int keycode, t_vars *vars)
-{
-	if (keycode == KEY_ESC)
-	{
-		mlx_destroy_window(vars->mlx, vars->win);
-		exit(0);
-	}
-	else if (keycode == KEY_W)
-		move_up(vars);
-	else if (keycode == KEY_S)
-		move_down(vars);
-	else if (keycode == KEY_D)
-		move_left(vars);
-	else if (keycode == KEY_A)
-		move_right(vars);
-	else if (keycode == KEY_LEFT)
-		rotate_left(vars);
-	else if (keycode == KEY_RIGHT)
-		rotate_right(vars);
-	adjust_pos_range(vars);
-	return (0);
 }

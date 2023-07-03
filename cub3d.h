@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 16:43:38 by hyobicho          #+#    #+#             */
-/*   Updated: 2023/07/03 17:05:42 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/03 17:47:09 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,8 +122,6 @@ typedef struct s_vars
 	int			fd;
 	int			map_x;
 	int			map_y;
-	int			height;
-	int			width;
 	double		posX;
 	double		posY;
 	double		angle;
@@ -137,6 +135,22 @@ typedef struct s_vars
 void	init_vars(t_vars *vars, char *map_name);
 t_map	*init_map_node(char *str, int h, t_vars *vars);
 char	*init_map_head(t_vars *vars, t_map **map);
+
+// key_hook.c
+int		key_hook(int keycode, t_vars *vars);
+
+// key_move.c
+void	move_up(t_vars *vars);
+void	move_down(t_vars *vars);
+void	move_left(t_vars *vars);
+void	move_right(t_vars *vars);
+
+// key_rotate.c
+void	rotate_left(t_vars *vars);
+void	rotate_right(t_vars *vars);
+
+// minimap.c
+void	paint_minimap(t_vars *vars, int width, int height);
 
 // utils.c
 void	measure_map_size(t_vars *vars, t_map *map, char	*str);
@@ -157,20 +171,19 @@ void	save_color(t_vars *vars, char **tmp);
 void	check_mapfile(t_vars *vars);
 
 // paint.c
-void	paint_bg(t_vars *vars);
 void	my_mlx_pixel_put(t_vars *vars, int x, int y, int color);
-void	paint_minimap(t_vars *vars, int width, int height);
-void	init_player(t_vars *vars);
+void	paint_bg(t_vars *vars);
 void	paint_walls(t_vars *vars, t_texture *texture, t_ray *r, int x);
-int		paint_map(t_vars *vars);
-int		key_hook(int keycode, t_vars *vars);
-void	adjust_pos_range(t_vars *vars); //TODO - 다른함수랑 합칠수도
 
 //raycasting1.c
+void	init_player(t_vars *vars);
 void	init_raycasting_vars1(t_vars *vars, t_ray *r, int x);
 void	init_raycasting_vars2(t_vars *vars, t_ray *r);
 void	raycasting(t_vars *vars, t_ray *r);
+
+// raycasting2.c
 void	init_draw_xpoints(t_vars *vars, t_ray *r);
 void	init_draw_ypoints(t_ray *r);
+int		paint_map(t_vars *vars);
 
 #endif

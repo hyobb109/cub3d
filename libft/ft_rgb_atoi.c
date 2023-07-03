@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/08 04:50:31 by hyobicho          #+#    #+#             */
-/*   Updated: 2023/06/19 19:29:24 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/03 17:38:48 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,6 @@ int	ft_rgb_atoi(const char *str)
 	int			res;
 	int			i;
 
-	// while (ft_isblank(*str))
-	// 	str++;
 	if (*str == '+')
 		str++;
 	while (*str == '0')

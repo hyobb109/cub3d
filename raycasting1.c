@@ -3,16 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   raycasting1.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
+/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/03 16:29:42 by yunjcho          ###   ########.fr       */
+/*   Updated: 2023/07/03 17:32:32 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-//init.c로 옮기기
 static void	init_dirplane(t_vars *vars, int idx)
 {
 	const double	dir_x[4] = {0.0, 0.0, -1.0, 1.0};
@@ -26,7 +25,6 @@ static void	init_dirplane(t_vars *vars, int idx)
 	vars->p.planeY = plane_y[idx];
 }
 
-//init.c로 옮기기
 void	init_player(t_vars *vars)
 {
 	if (vars->play_pos == 'N')
@@ -94,36 +92,4 @@ void	raycasting(t_vars *vars, t_ray *r)
 		if (vars->new_map[r->mapY][r->mapX] == '1')
 			r->hit = 1;
 	}
-}
-
-void	init_draw_xpoints(t_vars *vars, t_ray *r)
-{
-	if (r->side == X_SIDE)
-	{
-		r->perpWallDist = (r->mapX - vars->posX \
-			+ (1 - r->stepX) / 2) / r->raydirX;
-		r->wallX = vars->posY + r->perpWallDist * r->raydirY;
-	}
-	else if (r->side == Y_SIDE)
-	{
-		r->perpWallDist = (r->mapY - vars->posY \
-			+ (1 - r->stepY) / 2) / r->raydirY;
-		r->wallX = vars->posX + r->perpWallDist * r->raydirX;
-	}
-	r->wallX -= floor(r->wallX);
-	r->texX = (int)(r->wallX * (double)vars->texture->img_width);// texture x 좌표
-	if ((r->side == X_SIDE && r->raydirX < 0) \
-		|| (r->side == Y_SIDE && r->raydirY > 0))
-		r->texX = vars->texture->img_width - r->texX -1;// 텍스쳐 좌우 반전
-}
-
-void	init_draw_ypoints(t_ray *r)// 벽 높이
-{
-	r->lineHeight = (int)((SCREEN_HEIGHT / 2) / r->perpWallDist);
-	r->drawStart = -r->lineHeight / 2 + SCREEN_HEIGHT / 2;
-	if (r->drawStart < 0)
-		r->drawStart = 0;
-	r->drawEnd = r->lineHeight / 2 + SCREEN_HEIGHT / 2;
-	if (r->drawEnd >= SCREEN_HEIGHT)
-		r->drawEnd = SCREEN_HEIGHT - 1;
 }
