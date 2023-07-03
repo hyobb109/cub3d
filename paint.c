@@ -6,7 +6,7 @@
 /*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/03 20:29:46 by yunjcho          ###   ########.fr       */
+/*   Updated: 2023/07/03 23:10:39 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	my_mlx_pixel_put(t_vars *vars, int x, int y, int color)
 	*(unsigned int *)dst = color;
 }
 
-void	paint_bg(t_vars *vars)
+static void	paint_bg(t_vars *vars)
 {
 	int	w;
 	int	h;
@@ -39,7 +39,7 @@ void	paint_bg(t_vars *vars)
 	}
 }
 
-void	paint_walls(t_vars *vars, t_texture *texture, t_ray *r, int x)
+static void	paint_walls(t_vars *vars, t_texture *texture, t_ray *r, int x)
 {
 	int	y;
 	int	color;
@@ -57,4 +57,39 @@ void	paint_walls(t_vars *vars, t_texture *texture, t_ray *r, int x)
 		color = texture->colors[texture->img_height * r->tex_y + r->tex_x];
 		my_mlx_pixel_put(vars, x, y, color);
 	}
+}
+
+static void	painting(t_vars *vars, t_ray *r, int x)
+{
+	if (r->raydir_y < 0 && r->side == Y_SIDE)
+		paint_walls(vars, &vars->texture[NO], r, x);
+	else if (r->raydir_y > 0 && r->side == Y_SIDE)
+		paint_walls(vars, &vars->texture[SO], r, x);
+	else if (r->raydir_x < 0 && r->side == X_SIDE)
+		paint_walls(vars, &vars->texture[WE], r, x);
+	else if (r->raydir_x > 0 && r->side == X_SIDE)
+		paint_walls(vars, &vars->texture[EA], r, x);
+}
+
+int	paint_map(t_vars *vars)
+{
+	int		x;
+	t_ray	r;
+
+	mlx_clear_window(vars->mlx, vars->win);
+	paint_bg(vars);
+	x = -1;
+	while (++x < SCREEN_WIDTH)
+	{
+		init_raycasting_vars(vars, &r, x);
+		init_side_dist(vars, &r);
+		raycasting(vars, &r);
+		init_perp_dist(vars, &r);
+		init_draw_ypoints(&r);
+		if (vars->new_map[r.cur_y][r.cur_x] == '1')
+			painting(vars, &r, x);
+	}
+	paint_minimap(vars, vars->map_x * MINIMAP_SIZE, vars->map_y * MINIMAP_SIZE);
+	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.ptr, 0, 0);
+	return (0);
 }

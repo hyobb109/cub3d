@@ -6,13 +6,13 @@
 /*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/03 20:30:16 by yunjcho          ###   ########.fr       */
+/*   Updated: 2023/07/03 22:59:13 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-void	init_draw_xpoints(t_vars *vars, t_ray *r)
+void	init_perp_dist(t_vars *vars, t_ray *r)
 {
 	if (r->side == X_SIDE)
 	{
@@ -44,37 +44,24 @@ void	init_draw_ypoints(t_ray *r)
 		r->draw_end = SCREEN_HEIGHT - 1;
 }
 
-static void	painting(t_vars *vars, t_ray *r, int x)
+void	raycasting(t_vars *vars, t_ray *r)
 {
-	if (r->raydir_y < 0 && r->side == Y_SIDE)
-		paint_walls(vars, &vars->texture[NO], r, x);
-	else if (r->raydir_y > 0 && r->side == Y_SIDE)
-		paint_walls(vars, &vars->texture[SO], r, x);
-	else if (r->raydir_x < 0 && r->side == X_SIDE)
-		paint_walls(vars, &vars->texture[WE], r, x);
-	else if (r->raydir_x > 0 && r->side == X_SIDE)
-		paint_walls(vars, &vars->texture[EA], r, x);
-}
-
-int	paint_map(t_vars *vars)
-{
-	int		x;
-	t_ray	r;
-
-	mlx_clear_window(vars->mlx, vars->win);
-	paint_bg(vars);
-	x = -1;
-	while (++x < SCREEN_WIDTH)
+	r->hit = 0;
+	while (!r->hit)
 	{
-		init_raycasting_vars1(vars, &r, x);
-		init_raycasting_vars2(vars, &r);
-		raycasting(vars, &r);
-		init_draw_xpoints(vars, &r);
-		init_draw_ypoints(&r);
-		if (vars->new_map[r.cur_y][r.cur_x] == '1')
-			painting(vars, &r, x);
+		if (r->side_dist_x < r->side_dist_y)
+		{
+			r->side_dist_x += r->delta_dist_x;
+			r->cur_x += r->step_x;
+			r->side = X_SIDE;
+		}
+		else
+		{
+			r->side_dist_y += r->delta_dist_y;
+			r->cur_y += r->step_y;
+			r->side = Y_SIDE;
+		}
+		if (vars->new_map[r->cur_y][r->cur_x] == '1')
+			r->hit = 1;
 	}
-	paint_minimap(vars, vars->map_x * MINIMAP_SIZE, vars->map_y * MINIMAP_SIZE);
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.ptr, 0, 0);
-	return (0);
 }

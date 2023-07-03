@@ -6,7 +6,7 @@
 /*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 16:43:38 by hyobicho          #+#    #+#             */
-/*   Updated: 2023/07/03 20:30:16 by yunjcho          ###   ########.fr       */
+/*   Updated: 2023/07/03 23:09:18 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@
 # define PI 3.141592
 # define SPEED 0.2
 # define MINIMAP_SIZE 10
-# define SCREEN_WIDTH 1024
-# define SCREEN_HEIGHT 768
+# define SCREEN_WIDTH 800
+# define SCREEN_HEIGHT 800
 
 typedef struct s_img
 {
@@ -164,18 +164,16 @@ void	check_mapfile(t_vars *vars);
 
 // paint.c
 void	my_mlx_pixel_put(t_vars *vars, int x, int y, int color);
-void	paint_bg(t_vars *vars);
-void	paint_walls(t_vars *vars, t_texture *texture, t_ray *r, int x);
+int		paint_map(t_vars *vars);
 
 //raycasting1.c
 void	init_player(t_vars *vars);
-void	init_raycasting_vars1(t_vars *vars, t_ray *r, int x);
-void	init_raycasting_vars2(t_vars *vars, t_ray *r);
+void	init_raycasting_vars(t_vars *vars, t_ray *r, int x);
+void	init_side_dist(t_vars *vars, t_ray *r);
 void	raycasting(t_vars *vars, t_ray *r);
 
 // raycasting2.c
-void	init_draw_xpoints(t_vars *vars, t_ray *r);
+void	init_perp_dist(t_vars *vars, t_ray *r);
 void	init_draw_ypoints(t_ray *r);
-int		paint_map(t_vars *vars);
 
 #endif

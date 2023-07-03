@@ -6,7 +6,7 @@
 /*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/03 20:30:16 by yunjcho          ###   ########.fr       */
+/*   Updated: 2023/07/03 22:54:43 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	init_player(t_vars *vars)
 		init_dirplane(vars, 3);
 }
 
-void	init_raycasting_vars1(t_vars *vars, t_ray *r, int x)
+void	init_raycasting_vars(t_vars *vars, t_ray *r, int x)
 {
 	r->cur_x = (int)vars->pos_x;
 	r->cur_y = (int)vars->pos_y;
@@ -48,7 +48,7 @@ void	init_raycasting_vars1(t_vars *vars, t_ray *r, int x)
 	r->delta_dist_y = fabs(1 / r->raydir_y);
 }
 
-void	init_raycasting_vars2(t_vars *vars, t_ray *r)
+void	init_side_dist(t_vars *vars, t_ray *r)
 {
 	if (r->raydir_x > 0)
 	{
@@ -69,27 +69,5 @@ void	init_raycasting_vars2(t_vars *vars, t_ray *r)
 	{
 		r->step_y = -1;
 		r->side_dist_y = (vars->pos_y - r->cur_y) * r->delta_dist_y;
-	}
-}
-
-void	raycasting(t_vars *vars, t_ray *r)
-{
-	r->hit = 0;
-	while (!r->hit)
-	{
-		if (r->side_dist_x < r->side_dist_y)
-		{
-			r->side_dist_x += r->delta_dist_x;
-			r->cur_x += r->step_x;
-			r->side = X_SIDE;
-		}
-		else
-		{
-			r->side_dist_y += r->delta_dist_y;
-			r->cur_y += r->step_y;
-			r->side = Y_SIDE;
-		}
-		if (vars->new_map[r->cur_y][r->cur_x] == '1')
-			r->hit = 1;
 	}
 }
