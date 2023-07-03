@@ -6,23 +6,11 @@
 /*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/03 16:34:43 by yunjcho          ###   ########.fr       */
+/*   Updated: 2023/07/03 17:15:15 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
-
-// void	adjust_pos_range(t_vars *vars)
-// {
-// 	if (vars->new_map[(int)(vars->posY + 0.01)][(int)vars->posX] == '1')
-// 		vars->posY -= 0.01;
-// 	else if (vars->new_map[(int)(vars->posY - 0.01)][(int)vars->posX] == '1')
-// 		vars->posY += 0.01;
-// 	else if (vars->new_map[(int)vars->posY][(int)(vars->posX + 0.01)] == '1')
-// 		vars->posX -= 0.01;
-// 	else if (vars->new_map[(int)vars->posY][(int)(vars->posX - 0.01)] == '1')
-// 		vars->posX += 0.01;
-// }
 
 void	painting(t_vars *vars, t_ray *r, int x)
 {
@@ -43,7 +31,6 @@ int	paint_map(t_vars *vars)
 
 	mlx_clear_window(vars->mlx, vars->win);
 	paint_bg(vars);
-	adjust_pos_range(vars);
 	x = -1;
 	while (++x < SCREEN_WIDTH)
 	{

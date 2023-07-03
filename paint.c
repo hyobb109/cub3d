@@ -6,7 +6,7 @@
 /*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/03 16:25:55 by yunjcho          ###   ########.fr       */
+/*   Updated: 2023/07/03 17:13:42 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,78 +124,99 @@ void	adjust_pos_range(t_vars *vars)
 		vars->posX += 0.01;
 }
 
-int	key_hook(int keycode, t_vars *vars)
+static void	move_up(t_vars *vars)
+{
+	if (vars->new_map[(int)(vars->posY)] \
+		[(int)(vars->posX + vars->p.dirX * SPEED)] != '1')
+		vars->posX += vars->p.dirX * SPEED;
+	if (vars->new_map[(int)(vars->posY \
+		+ vars->p.dirY * SPEED)][(int)(vars->posX)] != '1')
+		vars->posY += vars->p.dirY * SPEED;
+}
+
+static void	move_down(t_vars *vars)
+{
+	if (vars->new_map[(int)(vars->posY)] \
+		[(int)(vars->posX - vars->p.dirX * SPEED)] != '1')
+		vars->posX -= vars->p.dirX * SPEED;
+	if (vars->new_map[(int)(vars->posY \
+		- vars->p.dirY * SPEED)][(int)(vars->posX)] != '1')
+		vars->posY -= vars->p.dirY * SPEED;
+}
+
+static void	move_left(t_vars *vars)
+{
+	if (vars->new_map[(int)(vars->posY)]
+		[(int)(vars->posX + vars->p.planeX * SPEED)] != '1')
+		vars->posX += vars->p.planeX * SPEED;
+	if (vars->new_map[(int)(vars->posY \
+		+ vars->p.planeY * SPEED)][(int)(vars->posX)] != '1')
+		vars->posY += vars->p.planeY * SPEED;
+}
+
+static void	move_right(t_vars *vars)
+{
+	if (vars->new_map[(int)(vars->posY)] \
+		[(int)(vars->posX - vars->p.planeX * SPEED)] != '1')
+		vars->posX -= vars->p.planeX * SPEED;
+	if (vars->new_map[(int)(vars->posY \
+		- vars->p.planeY * SPEED)][(int)(vars->posX)] != '1')
+			vars->posY -= vars->p.planeY * SPEED;
+}
+
+static void	rotate_left(t_vars *vars)
 {
 	double	olddir_x;
 	double	oldplane_x;
 
+	olddir_x = vars->p.dirX;
+	vars->p.dirX = vars->p.dirX \
+		* cos(vars->angle) + vars->p.dirY * sin(vars->angle);
+	vars->p.dirY = -olddir_x \
+		* sin(vars->angle) + vars->p.dirY * cos(vars->angle);
+	oldplane_x = vars->p.planeX;
+	vars->p.planeX = vars->p.planeX \
+		* cos(vars->angle) + vars->p.planeY * sin(vars->angle);
+	vars->p.planeY = -oldplane_x \
+		* sin(vars->angle) + vars->p.planeY * cos(vars->angle);
+}
+
+static void rotate_right(t_vars *vars)
+{
+	double	olddir_x;
+	double	oldplane_x;
+
+	olddir_x = vars->p.dirX;
+	vars->p.dirX = vars->p.dirX \
+		* cos(vars->angle) - vars->p.dirY * sin(vars->angle);
+	vars->p.dirY = olddir_x \
+		* sin(vars->angle) + vars->p.dirY * cos(vars->angle);
+	oldplane_x = vars->p.planeX;
+	vars->p.planeX = vars->p.planeX
+		* cos(vars->angle) - vars->p.planeY * sin(vars->angle);
+	vars->p.planeY = oldplane_x
+		* sin(vars->angle) + vars->p.planeY * cos(vars->angle);
+}
+
+int	key_hook(int keycode, t_vars *vars)
+{
 	if (keycode == KEY_ESC)
 	{
 		mlx_destroy_window(vars->mlx, vars->win);
 		exit(0);
 	}
 	else if (keycode == KEY_W)
-	{
-		if (vars->new_map[(int)(vars->posY)] \
-			[(int)(vars->posX + vars->p.dirX * SPEED)] != '1')
-			vars->posX += vars->p.dirX * SPEED;
-		if (vars->new_map[(int)(vars->posY \
-			+ vars->p.dirY * SPEED)][(int)(vars->posX)] != '1')
-			vars->posY += vars->p.dirY * SPEED;
-	}
+		move_up(vars);
 	else if (keycode == KEY_S)
-	{
-		if (vars->new_map[(int)(vars->posY)] \
-			[(int)(vars->posX - vars->p.dirX * SPEED)] != '1')
-			vars->posX -= vars->p.dirX * SPEED;
-		if (vars->new_map[(int)(vars->posY \
-			- vars->p.dirY * SPEED)][(int)(vars->posX)] != '1')
-			vars->posY -= vars->p.dirY * SPEED;
-	}
+		move_down(vars);
 	else if (keycode == KEY_D)
-	{
-		if (vars->new_map[(int)(vars->posY)]
-			[(int)(vars->posX + vars->p.planeX * SPEED)] != '1')
-			vars->posX += vars->p.planeX * SPEED;
-		if (vars->new_map[(int)(vars->posY \
-			+ vars->p.planeY * SPEED)][(int)(vars->posX)] != '1')
-			vars->posY += vars->p.planeY * SPEED;
-	}
+		move_left(vars);
 	else if (keycode == KEY_A)
-	{
-		if (vars->new_map[(int)(vars->posY)] \
-			[(int)(vars->posX - vars->p.planeX * SPEED)] != '1')
-			vars->posX -= vars->p.planeX * SPEED;
-		if (vars->new_map[(int)(vars->posY \
-			- vars->p.planeY * SPEED)][(int)(vars->posX)] != '1')
-				vars->posY -= vars->p.planeY * SPEED;
-	}
+		move_right(vars);
 	else if (keycode == KEY_LEFT)
-	{
-		olddir_x = vars->p.dirX;
-		vars->p.dirX = vars->p.dirX \
-			* cos(vars->angle) + vars->p.dirY * sin(vars->angle);
-		vars->p.dirY = -olddir_x \
-			* sin(vars->angle) + vars->p.dirY * cos(vars->angle);
-		oldplane_x = vars->p.planeX;
-		vars->p.planeX = vars->p.planeX \
-			* cos(vars->angle) + vars->p.planeY * sin(vars->angle);
-		vars->p.planeY = -oldplane_x \
-			* sin(vars->angle) + vars->p.planeY * cos(vars->angle);
-	}
+		rotate_left(vars);
 	else if (keycode == KEY_RIGHT)
-	{
-		olddir_x = vars->p.dirX;
-		vars->p.dirX = vars->p.dirX \
-			* cos(vars->angle) - vars->p.dirY * sin(vars->angle);
-		vars->p.dirY = olddir_x \
-			* sin(vars->angle) + vars->p.dirY * cos(vars->angle);
-		oldplane_x = vars->p.planeX;
-		vars->p.planeX = vars->p.planeX
-			* cos(vars->angle) - vars->p.planeY * sin(vars->angle);
-		vars->p.planeY = oldplane_x
-			* sin(vars->angle) + vars->p.planeY * cos(vars->angle);
-	}
+		rotate_right(vars);
 	adjust_pos_range(vars);
 	return (0);
 }
