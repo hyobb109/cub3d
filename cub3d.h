@@ -152,8 +152,16 @@ void	paint_bg(t_vars *vars);
 void	my_mlx_pixel_put(t_vars *vars, int x, int y, int color);
 void	paint_minimap(t_vars *vars, int width, int height);
 void	init_player(t_vars *vars);
-void	paint_walls(t_vars *vars, t_texture *texture, t_ray r, int x); // r -> *r 로 바꾸기
+void	paint_walls(t_vars *vars, t_texture *texture, t_ray *r, int x);
 int		paint_map(t_vars *vars);
 int		key_hook(int keycode, t_vars *vars);
+void	adjust_pos_range(t_vars *vars); //TODO - 다른함수랑 합칠수도
+
+//raycasting1.c
+void	init_raycasting_vars1(t_vars *vars, t_ray *r, int x);
+void	init_raycasting_vars2(t_vars *vars, t_ray *r);
+void	raycasting(t_vars *vars, t_ray *r);
+void	init_draw_xpoints(t_vars *vars, t_ray *r);
+void	init_draw_ypoints(t_ray *r);
 
 #endif

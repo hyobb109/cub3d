@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   paint.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 21:21:07 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/02 23:02:15 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/03 16:25:55 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,47 @@ void	my_mlx_pixel_put(t_vars *vars, int x, int y, int color)
 	*(unsigned int *)dst = color;
 }
 
+static int	is_redrange(t_vars *vars, int w, int h)
+{
+	int	width;
+	int	height;
+
+	width = vars->map_x * MINIMAP_SIZE;
+	height = vars->map_y * MINIMAP_SIZE;
+	if (((vars->posX * MINIMAP_SIZE > w \
+		&& vars->posX * MINIMAP_SIZE < w + 3) \
+		&& (vars->posY * MINIMAP_SIZE > h \
+		&& vars->posY * MINIMAP_SIZE < h + 3)) \
+		|| h == 0 || h == height - 1 || w == 0 || w == width - 1)
+		return (1);
+	return (0);
+}
+
+static void	painting_minimap(t_vars *vars, int w, int h)
+{
+	int	cx;
+	int	cy;
+
+	cx = w / MINIMAP_SIZE;
+	cy = h / MINIMAP_SIZE;
+	if (is_redrange(vars, w, h))
+		my_mlx_pixel_put(vars, w + MINIMAP_SIZE / 2, \
+		h + MINIMAP_SIZE / 2, 0xff0000);
+	else if (vars->new_map[cy][cx] == '1')
+		my_mlx_pixel_put(vars, w + MINIMAP_SIZE / 2, \
+			h + MINIMAP_SIZE / 2, 0xa0a0a0);
+	else if (vars->new_map[cy][cx] == -1)
+		my_mlx_pixel_put(vars, w + MINIMAP_SIZE / 2, \
+			h + MINIMAP_SIZE / 2, vars->ceiling);
+	else
+		my_mlx_pixel_put(vars, w + MINIMAP_SIZE / 2, \
+			h + MINIMAP_SIZE / 2, vars->floor);
+}
+
 void	paint_minimap(t_vars *vars, int width, int height)
 {
 	int	h;
 	int	w;
-	int	cx;
-	int	cy;
 
 	h = -1;
 	while (++h < height)
@@ -33,18 +68,7 @@ void	paint_minimap(t_vars *vars, int width, int height)
 		w = -1;
 		while (++w < width)
 		{
-			cx = w / MINIMAP_SIZE;
-			cy = h / MINIMAP_SIZE;
-			if (h == 0 || h == height - 1 || w == 0 || w == width - 1)
-				my_mlx_pixel_put(vars, w + MINIMAP_SIZE / 2, h + MINIMAP_SIZE / 2, 0xff0000);
-			else if ((vars->posX * MINIMAP_SIZE > w && vars->posX * MINIMAP_SIZE < w + 3) && (vars->posY * MINIMAP_SIZE > h && vars->posY * MINIMAP_SIZE < h + 3))
-				my_mlx_pixel_put(vars, w + MINIMAP_SIZE / 2, h + MINIMAP_SIZE / 2, 0xff0000);
-			else if (vars->new_map[cy][cx] == '1')
-				my_mlx_pixel_put(vars, w  + MINIMAP_SIZE / 2, h + MINIMAP_SIZE / 2, 0xa0a0a0);
-			else if (vars->new_map[cy][cx] == -1)
-				my_mlx_pixel_put(vars, w + MINIMAP_SIZE / 2, h + MINIMAP_SIZE / 2, vars->ceiling);
-			else
-				my_mlx_pixel_put(vars, w + MINIMAP_SIZE / 2, h + MINIMAP_SIZE / 2, vars->floor);
+			painting_minimap(vars, w, h);
 		}
 	}
 }
@@ -68,180 +92,42 @@ void	paint_bg(t_vars *vars)
 	}
 }
 
-void	init_player(t_vars *vars)
-{
-	if (vars->play_pos == 'N')
-	{
-		vars->p.dirX = 0;
-		vars->p.dirY = -1;
-		vars->p.planeX = 0.66;
-		vars->p.planeY = 0;
-	}
-	else if (vars->play_pos == 'S')
-	{
-		vars->p.dirX = 0;
-		vars->p.dirY = 1;
-		vars->p.planeX = -0.66;
-		vars->p.planeY = 0;
-	}
-	else if (vars->play_pos == 'E')
-	{
-		vars->p.dirX = 1;
-		vars->p.dirY = 0;
-		vars->p.planeX = 0;
-		vars->p.planeY = 0.66;
-	}
-	else if (vars->play_pos == 'W')
-	{
-		vars->p.dirX = -1;
-		vars->p.dirY = 0;
-		vars->p.planeX = 0;
-		vars->p.planeY = 0.66;
-	}
-}
-
-void	paint_walls(t_vars *vars, t_texture *texture, t_ray r, int x)
+void	paint_walls(t_vars *vars, t_texture *texture, t_ray *r, int x)
 {
 	int	y;
 	int	color;
 
-	r.texStep = 1.0 * vars->texture->img_height / r.lineHeight;
-	r.texPos = (r.drawStart - SCREEN_HEIGHT / 2 + r.lineHeight / 2) * r.texStep;
-	y = r.drawStart - 1;
-	texture->colors = (int *)mlx_get_data_addr(texture->img.ptr, &texture->img.bpp, &texture->img.len, &texture->img.endian);
-	while (++y < r.drawEnd)
+	r->texStep = 1.0 * vars->texture->img_height / r->lineHeight;
+	r->texPos = (r->drawStart - SCREEN_HEIGHT / 2 \
+		+ r->lineHeight / 2) * r->texStep;
+	y = r->drawStart - 1;
+	texture->colors = (int *)mlx_get_data_addr(texture->img.ptr, \
+		&texture->img.bpp, &texture->img.len, &texture->img.endian);
+	while (++y < r->drawEnd)
 	{
-		r.texY = (int)r.texPos;
-		r.texPos += r.texStep;
-		color = texture->colors[texture->img_height * r.texY + r.texX];
+		r->texY = (int)r->texPos;
+		r->texPos += r->texStep;
+		color = texture->colors[texture->img_height * r->texY + r->texX];
 		my_mlx_pixel_put(vars, x, y, color);
 	}
 }
 
-int	paint_map(t_vars *vars)
+void	adjust_pos_range(t_vars *vars)
 {
-	int		x;
-	t_ray	r;
-
-	mlx_clear_window(vars->mlx, vars->win);
-	paint_bg(vars);
 	if (vars->new_map[(int)(vars->posY + 0.01)][(int)vars->posX] == '1')
-	{
 		vars->posY -= 0.01;
-	}
 	else if (vars->new_map[(int)(vars->posY - 0.01)][(int)vars->posX] == '1')
-	{
 		vars->posY += 0.01;
-	}
 	else if (vars->new_map[(int)vars->posY][(int)(vars->posX + 0.01)] == '1')
-	{
 		vars->posX -= 0.01;
-	}
 	else if (vars->new_map[(int)vars->posY][(int)(vars->posX - 0.01)] == '1')
-	{
 		vars->posX += 0.01;
-	}
-	x = -1;
-	while (++x < SCREEN_WIDTH)
-	{
-		r.mapX = (int)vars->posX;
-		r.mapY = (int)vars->posY;
-		r.camX = 2 * x / (double)(SCREEN_WIDTH) - 1;
-		r.raydirX = vars->p.dirX + vars->p.planeX * r.camX;
-		r.raydirY = vars->p.dirY + vars->p.planeY * r.camX;
-		r.deltaDistX = fabs(1 / r.raydirX);
-		r.deltaDistY = fabs(1 / r.raydirY);
-		if (r.raydirX > 0)
-		{
-			r.stepX = 1;
-			r.sideDistX = (r.mapX + 1 - vars->posX) * r.deltaDistX;
-		}	
-		else
-		{
-			r.stepX = -1;
-			r.sideDistX = (vars->posX - r.mapX) * r.deltaDistX;
-		}
-		if (r.raydirY > 0)
-		{
-			r.stepY = 1;
-			r.sideDistY = (r.mapY + 1 - vars->posY) * r.deltaDistY;
-		}
-		else
-		{
-			r.stepY = -1;
-			r.sideDistY = (vars->posY - r.mapY) * r.deltaDistY;
-		}
-		r.hit = 0;
-		while (!r.hit)
-		{
-			if (r.sideDistX < r.sideDistY)
-			{
-				r.sideDistX += r.deltaDistX;
-				r.mapX += r.stepX;
-				r.side = X_SIDE;
-			}
-			else
-			{
-				r.sideDistY += r.deltaDistY;
-				r.mapY += r.stepY;
-				r.side = Y_SIDE;
-			}
-			if (vars->new_map[r.mapY][r.mapX] == '1')
-				r.hit = 1;
-		}
-		if (r.side == X_SIDE)
-		{
-			r.perpWallDist = (r.mapX - vars->posX + (1 - r.stepX) / 2) / r.raydirX;
-			r.wallX = vars->posY + r.perpWallDist * r.raydirY;
-		}
-		else if (r.side == Y_SIDE)
-		{
-			r.perpWallDist = (r.mapY - vars->posY + (1 - r.stepY) / 2) / r.raydirY;
-			r.wallX = vars->posX + r.perpWallDist * r.raydirX;
-		}
-		r.wallX -= floor(r.wallX);
-		// texture x 좌표
-		r.texX = (int)(r.wallX * (double)vars->texture->img_width);
-		// 텍스쳐 좌우 반전
-		if ((r.side == X_SIDE && r.raydirX < 0) || (r.side == Y_SIDE && r.raydirY > 0))
-			r.texX = vars->texture->img_width - r.texX -1;
-		// 벽 높이
-		r.lineHeight = (int)((SCREEN_HEIGHT / 2) / r.perpWallDist);
-		r.drawStart = -r.lineHeight / 2 + SCREEN_HEIGHT / 2;
-		if (r.drawStart < 0)
-			r.drawStart = 0;
-		r.drawEnd = r.lineHeight / 2 + SCREEN_HEIGHT / 2;
-		if (r.drawEnd >= SCREEN_HEIGHT)
-			r.drawEnd = SCREEN_HEIGHT - 1;
-		if (vars->new_map[r.mapY][r.mapX] == '1')
-		{
-			if (r.raydirY < 0 && r.side == Y_SIDE)
-			{
-				paint_walls(vars, &vars->texture[NO], r, x);
-			}
-			else if (r.raydirY > 0 && r.side == Y_SIDE)
-			{
-				paint_walls(vars, &vars->texture[SO], r, x);
-			}
-			else if (r.raydirX < 0 && r.side == X_SIDE)
-			{
-				paint_walls(vars, &vars->texture[WE], r, x);
-			}
-			else if (r.raydirX > 0 && r.side == X_SIDE)
-			{
-				paint_walls(vars, &vars->texture[EA], r, x);
-			}
-		}
-	}
-	paint_minimap(vars, vars->map_x * MINIMAP_SIZE, vars->map_y * MINIMAP_SIZE);
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.ptr, 0, 0);
-	return (0);
 }
 
 int	key_hook(int keycode, t_vars *vars)
 {
-	double	oldDirX;
-	double	oldPlaneX;
+	double	olddir_x;
+	double	oldplane_x;
 
 	if (keycode == KEY_ESC)
 	{
@@ -250,49 +136,66 @@ int	key_hook(int keycode, t_vars *vars)
 	}
 	else if (keycode == KEY_W)
 	{
-		if (vars->new_map[(int)(vars->posY)][(int)(vars->posX + vars->p.dirX * SPEED)] != '1')
+		if (vars->new_map[(int)(vars->posY)] \
+			[(int)(vars->posX + vars->p.dirX * SPEED)] != '1')
 			vars->posX += vars->p.dirX * SPEED;
-		if (vars->new_map[(int)(vars->posY + vars->p.dirY * SPEED)][(int)(vars->posX)] != '1')
+		if (vars->new_map[(int)(vars->posY \
+			+ vars->p.dirY * SPEED)][(int)(vars->posX)] != '1')
 			vars->posY += vars->p.dirY * SPEED;
 	}
 	else if (keycode == KEY_S)
 	{
-		if (vars->new_map[(int)(vars->posY)][(int)(vars->posX - vars->p.dirX * SPEED)] != '1')
+		if (vars->new_map[(int)(vars->posY)] \
+			[(int)(vars->posX - vars->p.dirX * SPEED)] != '1')
 			vars->posX -= vars->p.dirX * SPEED;
-		if (vars->new_map[(int)(vars->posY - vars->p.dirY * SPEED)][(int)(vars->posX)] != '1')
+		if (vars->new_map[(int)(vars->posY \
+			- vars->p.dirY * SPEED)][(int)(vars->posX)] != '1')
 			vars->posY -= vars->p.dirY * SPEED;
 	}
-		else if (keycode == KEY_D)
+	else if (keycode == KEY_D)
 	{
-		if (vars->new_map[(int)(vars->posY)][(int)(vars->posX + vars->p.planeX * SPEED)] != '1')
+		if (vars->new_map[(int)(vars->posY)]
+			[(int)(vars->posX + vars->p.planeX * SPEED)] != '1')
 			vars->posX += vars->p.planeX * SPEED;
-		if (vars->new_map[(int)(vars->posY + vars->p.planeY * SPEED)][(int)(vars->posX)] != '1')
+		if (vars->new_map[(int)(vars->posY \
+			+ vars->p.planeY * SPEED)][(int)(vars->posX)] != '1')
 			vars->posY += vars->p.planeY * SPEED;
 	}
 	else if (keycode == KEY_A)
 	{
-		if (vars->new_map[(int)(vars->posY)][(int)(vars->posX - vars->p.planeX * SPEED)] != '1')
+		if (vars->new_map[(int)(vars->posY)] \
+			[(int)(vars->posX - vars->p.planeX * SPEED)] != '1')
 			vars->posX -= vars->p.planeX * SPEED;
-		if (vars->new_map[(int)(vars->posY - vars->p.planeY * SPEED)][(int)(vars->posX)] != '1')
+		if (vars->new_map[(int)(vars->posY \
+			- vars->p.planeY * SPEED)][(int)(vars->posX)] != '1')
 				vars->posY -= vars->p.planeY * SPEED;
 	}
 	else if (keycode == KEY_LEFT)
 	{
-		oldDirX = vars->p.dirX;
-		vars->p.dirX = vars->p.dirX * cos(vars->angle) + vars->p.dirY * sin(vars->angle);
-		vars->p.dirY = -oldDirX * sin(vars->angle) + vars->p.dirY * cos(vars->angle);
-		oldPlaneX = vars->p.planeX;
-		vars->p.planeX = vars->p.planeX * cos(vars->angle) + vars->p.planeY * sin(vars->angle);
-		vars->p.planeY = -oldPlaneX * sin(vars->angle) + vars->p.planeY * cos(vars->angle);
+		olddir_x = vars->p.dirX;
+		vars->p.dirX = vars->p.dirX \
+			* cos(vars->angle) + vars->p.dirY * sin(vars->angle);
+		vars->p.dirY = -olddir_x \
+			* sin(vars->angle) + vars->p.dirY * cos(vars->angle);
+		oldplane_x = vars->p.planeX;
+		vars->p.planeX = vars->p.planeX \
+			* cos(vars->angle) + vars->p.planeY * sin(vars->angle);
+		vars->p.planeY = -oldplane_x \
+			* sin(vars->angle) + vars->p.planeY * cos(vars->angle);
 	}
 	else if (keycode == KEY_RIGHT)
 	{
-		oldDirX = vars->p.dirX;
-		vars->p.dirX = vars->p.dirX * cos(vars->angle) - vars->p.dirY * sin(vars->angle);
-		vars->p.dirY = oldDirX * sin(vars->angle) + vars->p.dirY * cos(vars->angle);
-		oldPlaneX = vars->p.planeX;
-		vars->p.planeX = vars->p.planeX * cos(vars->angle) - vars->p.planeY * sin(vars->angle);
-		vars->p.planeY = oldPlaneX * sin(vars->angle) + vars->p.planeY * cos(vars->angle);
+		olddir_x = vars->p.dirX;
+		vars->p.dirX = vars->p.dirX \
+			* cos(vars->angle) - vars->p.dirY * sin(vars->angle);
+		vars->p.dirY = olddir_x \
+			* sin(vars->angle) + vars->p.dirY * cos(vars->angle);
+		oldplane_x = vars->p.planeX;
+		vars->p.planeX = vars->p.planeX
+			* cos(vars->angle) - vars->p.planeY * sin(vars->angle);
+		vars->p.planeY = oldplane_x
+			* sin(vars->angle) + vars->p.planeY * cos(vars->angle);
 	}
+	adjust_pos_range(vars);
 	return (0);
 }
