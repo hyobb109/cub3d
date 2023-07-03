@@ -1,9 +1,9 @@
 NO ./img/N.xpm
 SO ./img/wall_S.xpm
 WE ./img/wall_W.xpm
+F 26, 54, 63
 EA ./img/E.xpm
 
-F 26, 54, 63
 C 63, 75, 78
 
         1111111111111111111111111

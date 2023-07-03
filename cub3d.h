@@ -115,8 +115,6 @@ typedef struct s_vars
 	double		posX;
 	double		posY;
 	double		angle;
-	int			play_x;
-	int			play_y;
 	char		play_pos;
 	int			floor;
 	int			ceiling;
@@ -125,12 +123,10 @@ typedef struct s_vars
 
 // init.c
 void	init_vars(t_vars *vars, char *map_name);
-t_map	*init_map_node(char *str, int h, t_vars *vars);
 
 // utils.c
 void	check_mapfile(t_vars *vars);
-void	measure_map_size(t_vars *vars);
-char	*check_blank(const char *s, t_vars *vars);
+void	measure_map_size(t_vars *vars, t_map *map, char	*str);
 int		ft_exit(void);
 
 // matrix.c
@@ -139,7 +135,6 @@ void	free_matrix(char **arr);
 void	free_lst(t_map *map); // todo
 
 // image.c
-void	init_texture_info(t_vars *vars, char **texture, int texture_id);
 void	save_element(t_vars *vars, char **texture);
 void	save_color(t_vars *vars, char **tmp);
 
@@ -153,7 +148,7 @@ void	paint_bg(t_vars *vars);
 void	my_mlx_pixel_put(t_vars *vars, int x, int y, int color);
 void	paint_minimap(t_vars *vars, int width, int height);
 void	init_player(t_vars *vars);
-void	paint_walls(t_vars *vars, t_texture *texture, t_ray r, int x);
+void	paint_walls(t_vars *vars, t_texture *texture, t_ray r, int x); // r -> *r 로 바꾸기
 int		paint_map(t_vars *vars);
 int		key_hook(int keycode, t_vars *vars);
 

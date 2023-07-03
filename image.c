@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   image1.c                                           :+:      :+:    :+:   */
+/*   image.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 16:20:57 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/02 22:48:37 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/03 14:48:08 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-void	init_texture_info(t_vars *vars, char **texture, int texture_id)
+static void	init_texture_info(t_vars *vars, char **texture, int texture_id)
 {
 	vars->texture[texture_id].id = ft_strdup(texture[0]);
 	if (vars->texture[texture_id].file_name)
@@ -47,6 +47,16 @@ void	save_element(t_vars *vars, char **texture)
 		print_error_exit("Invalid Texture Id");
 }
 
+static void	init_color(int *color1, int color2, char **tmp)
+{
+	if (*color1 != -1)
+		print_error_exit("Color already exists");
+	*color1 = ft_rgb_atoi(tmp[1]) * 256 * 256 + ft_rgb_atoi(tmp[2]) * 256 \
+	+ ft_rgb_atoi(tmp[3]);
+	if (*color1 == color2)
+		print_error_exit("The floor and ceiling colors must be different");
+}
+
 void	save_color(t_vars *vars, char **tmp)
 {
 	int		cnt;
@@ -57,23 +67,9 @@ void	save_color(t_vars *vars, char **tmp)
 	if (cnt != 4)
 		print_error_exit("Color error");
 	if (!ft_strncmp(tmp[0], "C", 2))
-	{
-		if (vars->ceiling != -1)
-			print_error_exit("ceiling color already exists");
-		vars->ceiling = ft_rgb_atoi(tmp[1]) * 256 * 256 \
-		+ ft_rgb_atoi(tmp[2]) * 256 + ft_rgb_atoi(tmp[3]);
-		if (vars->ceiling == vars->floor)
-			print_error_exit("The floor and ceiling colors must be different");
-	}
+		init_color(&vars->ceiling, vars->floor, tmp);
 	else if (!ft_strncmp(tmp[0], "F", 2))
-	{
-		if (vars->floor != -1)
-			print_error_exit("floor color already exists");
-		vars->floor = ft_rgb_atoi(tmp[1]) * 256 * 256 \
-		+ ft_rgb_atoi(tmp[2]) * 256 + ft_rgb_atoi(tmp[3]);
-		if (vars->ceiling == vars->floor)
-			print_error_exit("The floor and ceiling colors must be different");
-	}
+		init_color(&vars->floor, vars->ceiling, tmp);
 	else
 		print_error_exit("Color type error");
 }

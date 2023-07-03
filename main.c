@@ -6,7 +6,7 @@
 /*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 13:44:29 by hyobicho          #+#    #+#             */
-/*   Updated: 2023/07/03 13:49:11 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/03 14:48:41 by hyobicho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,16 +23,10 @@ static void	check_args(int ac, char **av)
 		print_error_exit("Not a valid extension");
 }
 
-void leaks(void)
-{
-	system("leaks cub3D");
-}
-
 int	main(int ac, char **av)
 {
 	t_vars	vars;
 
-	atexit(leaks);
 	check_args(ac, av);
 	init_vars(&vars, av[1]);
 	check_mapfile(&vars);
