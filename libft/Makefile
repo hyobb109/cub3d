@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+         #
+#    By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/19 16:59:12 by yunjcho           #+#    #+#              #
-#    Updated: 2023/06/16 20:41:35 by hyobicho         ###   ########.fr        #
+#    Updated: 2023/07/04 13:14:34 by yunjcho          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ ARFLAGS = -rcus
 RM = rm -f
 
 SRCS = ft_rgb_atoi.c ft_error.c ft_isalpha.c ft_isdigit.c ft_isalnum.c ft_isascii.c \
-		ft_isprint.c ft_strlen.c ft_memset.c ft_bzero.c \
+		ft_isprint.c ft_strlen.c ft_memset.c ft_bzero.c ft_strcmp.c \
 		ft_memcpy.c ft_memmove.c ft_strlcpy.c ft_strlcat.c \
 		ft_toupper.c ft_tolower.c ft_strchr.c ft_strrchr.c \
 		ft_strchr.c ft_strncmp.c ft_memchr.c ft_memcmp.c \

@@ -6,31 +6,14 @@
 /*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 16:20:57 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/03 21:44:54 by yunjcho          ###   ########.fr       */
+/*   Updated: 2023/07/04 13:05:43 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-static void	check_filename(t_vars *vars, char *file_name)
-{
-	int	i;
-
-	i = -1;
-	while (++i < 4)
-	{
-		if (vars->texture[i].file_name)
-		{
-			if (!ft_strncmp(vars->texture[i].file_name, file_name, \
-				ft_strlen(file_name) + 1))
-				print_error_exit("Texture file name cannot be duplicated");
-		}
-	}
-}
-
 static void	init_texture_info(t_vars *vars, char **texture, int texture_id)
 {
-	check_filename(vars, texture[1]);
 	if (vars->texture[texture_id].file_name)
 		print_error_exit("Texture identifier cannot be duplicated");
 	vars->texture[texture_id].file_name = ft_strdup(texture[1]);

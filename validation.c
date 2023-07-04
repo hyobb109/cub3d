@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   validation.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 19:13:59 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/03 17:05:40 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/04 13:16:53 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,24 @@ static void	check_wall(t_vars *vars)
 	}
 }
 
+static void	check_filename(t_vars *vars)
+{
+	int	i;
+	int	j;
+
+	i = -1;
+	while (++i < 3)
+	{
+		j = i;
+		while (++j < 4)
+		{
+			if (!ft_strcmp(vars->texture[i].file_name,
+					vars->texture[j].file_name))
+				print_error_exit("Texture file name is duplicated");
+		}
+	}
+}
+
 void	check_mapfile(t_vars *vars)
 {
 	int		cnt;
@@ -67,6 +85,7 @@ void	check_mapfile(t_vars *vars)
 	}
 	if (cnt != 6)
 		print_error_exit("Element error");
+	check_filename(vars);
 	str = init_map_head(vars, &map);
 	measure_map_size(vars, map, str);
 	init_map(vars, map);

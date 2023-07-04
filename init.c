@@ -6,7 +6,7 @@
 /*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 15:53:36 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/07/03 20:21:34 by yunjcho          ###   ########.fr       */
+/*   Updated: 2023/07/04 13:00:56 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ void	init_vars(t_vars *vars, char *map_name)
 	vars->play_pos = 0;
 	vars->angle = 30 * PI / 180;
 	vars->fd = open(map_name, O_RDONLY);
+	if (vars->fd < 0)
+		print_error_exit("open error");
 	vars->mlx = mlx_init();
 	if (!vars->mlx)
 		print_error_exit(0);

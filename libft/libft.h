@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hyobicho <hyobicho@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: yunjcho <yunjcho@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/12 11:05:37 by yunjcho           #+#    #+#             */
-/*   Updated: 2023/06/19 21:50:39 by hyobicho         ###   ########.fr       */
+/*   Updated: 2023/07/04 13:14:21 by yunjcho          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ typedef struct s_list
 	struct s_list	*next;
 }	t_list;
 
+int		ft_strcmp(const char *s1, const char *s2);
 int		ft_rgb_atoi(const char *str);
 void	print_error_exit(char *err_msg);
 int		ft_isblank(char a);
